@@ -1,0 +1,50 @@
+{
+  "schemaVersion": 1,
+  "id": "project",
+  "type": "project-design-heavy",
+  "name": null,
+  "pipeline": [
+    {
+      "phase": "brainstorm",
+      "agent": "brainstormer",
+      "outputCheck": "docs/brainstorm/*.md"
+    },
+    {
+      "phase": "ux",
+      "agent": "ux-designer",
+      "outputCheck": "docs/ux/*.md"
+    },
+    {
+      "phase": "engineering",
+      "agent": "architect",
+      "outputCheck": "docs/engineering/*.md"
+    },
+    {
+      "phase": "plan",
+      "agent": "planner",
+      "outputCheck": [
+        "docs/plan/implementation-plan.md",
+        "docs/tasks/task-*/brief.md"
+      ]
+    },
+    {
+      "phase": "implement",
+      "agent": null,
+      "outputCheck": [
+        "docs/tasks/task-*/brief.md",
+        "docs/tasks/task-*/completion.md"
+      ]
+    }
+  ],
+  "currentPhase": "brainstorm",
+  "phaseStatus": "not_started",
+  "paths": {
+    "brainstormDir": "docs/brainstorm/",
+    "uxDir": "docs/ux/",
+    "engineeringDir": "docs/engineering/",
+    "plan": "docs/plan/implementation-plan.md",
+    "tasks": "docs/tasks/",
+    "decisions": "docs/decisions.md"
+  },
+  "history": []
+}

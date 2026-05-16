@@ -1,0 +1,44 @@
+{
+  "schemaVersion": 1,
+  "id": "feature/{{FEATURE_NAME}}",
+  "type": "feature-design-heavy",
+  "name": "{{FEATURE_NAME}}",
+  "pipeline": [
+    {
+      "phase": "ux",
+      "agent": "ux-designer",
+      "outputCheck": "docs/features/{{FEATURE_NAME}}/ux/*.md"
+    },
+    {
+      "phase": "engineering",
+      "agent": "feature-architect",
+      "outputCheck": "docs/features/{{FEATURE_NAME}}/engineering.md"
+    },
+    {
+      "phase": "plan",
+      "agent": "planner",
+      "outputCheck": [
+        "docs/features/{{FEATURE_NAME}}/plan.md",
+        "docs/features/{{FEATURE_NAME}}/tasks/task-*/brief.md"
+      ]
+    },
+    {
+      "phase": "implement",
+      "agent": null,
+      "outputCheck": [
+        "docs/features/{{FEATURE_NAME}}/tasks/task-*/brief.md",
+        "docs/features/{{FEATURE_NAME}}/tasks/task-*/completion.md"
+      ]
+    }
+  ],
+  "currentPhase": "ux",
+  "phaseStatus": "not_started",
+  "paths": {
+    "uxDir": "docs/features/{{FEATURE_NAME}}/ux/",
+    "engineering": "docs/features/{{FEATURE_NAME}}/engineering.md",
+    "plan": "docs/features/{{FEATURE_NAME}}/plan.md",
+    "tasks": "docs/features/{{FEATURE_NAME}}/tasks/",
+    "decisions": "docs/features/{{FEATURE_NAME}}/decisions.md"
+  },
+  "history": []
+}
