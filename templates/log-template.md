@@ -4,6 +4,8 @@
 
 ## Iteration 1
 
+> **Loop profile:** full / lightweight (note any orchestrator override of the brief's recommendation, with reason). See execution-methodology §1.5.
+
 ### Implement
 - **Files created:** (list with paths)
 - **Files modified:** (list with paths)
@@ -12,7 +14,8 @@
 - **Issues encountered:** (problems hit during implementation and how they were resolved)
 
 ### Test
-- **New tests written:** (list with paths)
+> Full profile: the tester's report. Lightweight profile: rename this to **Check (lightweight)** — no new tests are authored; instead paste the type-check and existing-suite output the orchestrator ran as a regression guard.
+- **New tests written:** (list with paths; "none — lightweight" if applicable)
 - **Failures:**
   - `test.name` — expected X, got Y (or: none)
 - **Full suite output:**

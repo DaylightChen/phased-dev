@@ -1,7 +1,7 @@
 {
   "name": "phased-dev",
   "version": "0.4.0",
-  "description": "Agent-driven phased development workflow built on a scope abstraction. Each scope declares its own pipeline; shipped pipelines cover standard projects (brainstorm → engineering → plan → implement), design-heavy projects (brainstorm → ux → engineering → plan → implement, with full design language / component inventory / a11y contract), standard features (engineering → plan → implement), and design-heavy features (ux → engineering → plan → implement, for UX-led features like onboarding rewrites or editor modes). Bundles 10 unified slash commands (including rewind-phase and generate-ux-preview), role-separated subagents, per-task completion markers, per-feature status mirrors, and templates with phase gates and per-task execution logs.",
+  "description": "Agent-driven phased development workflow built on a scope abstraction. Each scope declares its own pipeline; shipped pipelines cover standard projects (brainstorm → engineering → plan → implement), design-heavy projects (brainstorm → ux → engineering → plan → implement, with full design language / component inventory / a11y contract), standard features (engineering → plan → implement), and design-heavy features (ux → engineering → plan → implement, for UX-led features like onboarding rewrites or editor modes). Bundles 11 unified slash commands (including resolve-questions, rewind-phase and generate-ux-preview), role-separated subagents, per-task completion markers, per-feature status mirrors, and templates with phase gates and per-task execution logs.",
   "author": {
     "name": "Zenghui Cheng"
   }

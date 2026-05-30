@@ -65,6 +65,8 @@ Both `paths.plan` AND at least one brief must exist before the plan phase passes
 
 Every `brief.md` includes: **Goal**, **Context files**, **Downstream dependencies**, **Steps**, **Acceptance criteria**, **Output files**. See `docs/plan/task-brief-template.md`.
 
+**Loop profile.** Each brief may carry a `Loop profile` (`full` or `lightweight`). Default every task to `full`. Mark a task `lightweight` **only** when it introduces no executable runtime behavior — pure type/interface declarations, type-only re-exports, constants without logic, configuration, or docs — per execution-methodology §1.5. This lets the dev loop skip the test-authoring stage for genuinely trivial tasks while keeping the type-check, regression suite, and review gates. When uncertain, leave it `full`; the reviewer can upgrade a mis-classified lightweight task back to `full`.
+
 ## Coverage validation (mandatory)
 
 After drafting all task briefs, do an explicit coverage walk-through:

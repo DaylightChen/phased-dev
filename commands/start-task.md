@@ -25,7 +25,7 @@ The scope (project vs feature) is determined by `docs/.phased-dev/state.json`. T
 
 3. **Locate the task directory.** Glob `<paths.tasks>task-${ARGUMENTS}-*/`. If zero matches, stop and tell the user the task number doesn't exist in this scope (suggest they check the plan). If multiple matches, list them and ask the user to disambiguate.
 
-4. **Read the task `brief.md` end to end.** Verify it has the required sections (Goal, Context files, Downstream dependencies, Steps, Acceptance criteria, Output files). If anything's missing, stop and tell the user.
+4. **Read the task `brief.md` end to end.** Verify it has the required sections (Goal, Context files, Downstream dependencies, Steps, Acceptance criteria, Output files). If anything's missing, stop and tell the user. Also note the brief's **Loop profile** (`full` or `lightweight`) if present — it defaults to `full` when absent. This selects the dev-loop variant below.
 
 5. **Verify upstream output exists.** Check that the files the reviewer will need are present:
    - `paths.plan` — the implementation plan. If missing, the plan phase output is gone; tell the user to re-run `/phased-dev:start-phase` for the `plan` phase.
@@ -41,6 +41,22 @@ The scope (project vs feature) is determined by `docs/.phased-dev/state.json`. T
 
 Follow the handoff protocol from execution-methodology §2.3. The steps below define **what to dispatch and how to record** — for **why** each step exists and **when to terminate**, see the methodology.
 
+### Select the loop profile
+
+Per execution-methodology §1.5, pick the profile before Iteration 1:
+
+- **`full`** (default) — implement → test → review → fix. Use this unless the task clearly qualifies for lightweight.
+- **`lightweight`** — implement → review → fix, **skipping the test-authoring (Step B) stage**. Eligible only when the task introduces **no executable runtime behavior** (pure type/interface declarations, constants, configuration, or docs).
+
+Determine the profile from the brief's **Loop profile** field (default `full`). Then **independently confirm eligibility** — do not trust the label blindly:
+
+- Skim the brief's Steps and Output files. If anything adds runtime logic, branching, I/O, or observable behavior, override to **`full`** and tell the user you did so and why.
+- If the brief says `lightweight` but you are not confident it qualifies, use **`full`**. Lightweight is only for the obviously-trivial case.
+
+Record the chosen profile (and any override) in `log.md` under a one-line "Loop profile" note before Iteration 1.
+
+Even under `lightweight`, the quality gate is unchanged: the type-checker and the full **existing** test suite still run, and the reviewer still runs every iteration (see Completion and Step D below).
+
 ### Iteration 1
 
 **Step A — Implement.** Dispatch the `implementer` subagent with:
@@ -49,14 +65,16 @@ Follow the handoff protocol from execution-methodology §2.3. The steps below de
 
 When it returns, append its report to `log.md` under "Iteration 1 → Implement" per execution-methodology §6 (what to capture).
 
-**Step B — Test.** Dispatch the `tester` subagent with:
+**Step B — Test.** *(Full profile only — skip this step entirely for `lightweight`.)* Dispatch the `tester` subagent with:
 - The full path to the brief
 - The list of files the implementer touched
 - An instruction to write tests, run the full suite, and run type-checking
 
 Append its report to `log.md` under "Iteration 1 → Test" per execution-methodology §6.
 
-**Step C — Decide.** Per execution-methodology §1.2: if the tester reports failures or regressions → go to Fix iteration. Otherwise:
+**For the `lightweight` profile, instead of Step B:** run the project's type-checker and the existing full test suite yourself via Bash (discover the commands the same way the tester would — `package.json` scripts, `Makefile`, `CLAUDE.md`, or the brief). Paste the real output into `log.md` under "Iteration 1 → Check (lightweight)". These must be clean before proceeding — a lightweight task may add no tests, but it must not break the type-check or any existing test.
+
+**Step C — Decide.** Per execution-methodology §1.2: if the tester (full) or the type-check / existing suite (lightweight) reports failures or regressions → go to Fix iteration. Otherwise:
 
 **Step D — Review.** Before dispatching the reviewer, **prepare a reviewer brief** by reading `paths.plan` yourself and extracting:
   - The task list (numbered, with one-line summaries)
@@ -69,15 +87,19 @@ Append its report to `log.md` under "Iteration 1 → Test" per execution-methodo
   Dispatch the `reviewer` subagent with:
 - The full path to the brief
 - The diff (run `git diff` to capture it)
-- The tester's report
+- The tester's report (full profile), or your type-check + existing-suite output (lightweight profile)
 - **The reviewer brief** (task list + dependency rationale + next 2-3 task briefs) instead of the full plan file. The reviewer uses this to catch local-but-globally-wrong decisions without needing the entire plan in context.
 - The active scope's engineering spec — if `paths.engineeringDir` is set, use it (project-style); if `paths.engineering` is set, use that file (feature-style). The reviewer must confirm the implementation respects the architecture, not just the plan.
 - **If `paths.uxDir` is set:** also instruct the reviewer to read the UX spec (the most recent markdown file under `paths.uxDir`). This catches microcopy, a11y, and component deviations.
 - **If `paths.engineering` is set (feature-style scope):** also instruct the reviewer to read the project's most recent engineering spec under `docs/engineering/` and the project root `CLAUDE.md`. This catches "works in isolation, breaks the existing project" cases.
+- **If the profile is `lightweight`:** explicitly instruct the reviewer to confirm the task introduced **no executable runtime behavior** (and is therefore correctly classified). If the reviewer finds runtime logic that warrants tests, it must say so — the task is then **upgraded to `full`** (see Step E).
 
 Append its report to `log.md` under "Iteration 1 → Review".
 
-**Step E — Decide.** Per execution-methodology §1.2: if the reviewer reports issues → go to Fix iteration. Otherwise → go to Completion.
+**Step E — Decide.** Per execution-methodology §1.2:
+- If the reviewer reports issues → go to Fix iteration.
+- **If the profile was `lightweight` and the reviewer says the task actually needs tests** (it introduced testable runtime behavior) → **upgrade to `full`**: note the upgrade in `log.md`, dispatch the `tester` (Step B) now, and only proceed once it reports green and the reviewer re-approves. Do not commit a mis-classified lightweight task without tests.
+- Otherwise → go to Completion.
 
 ### Fix iteration
 
@@ -89,7 +111,7 @@ Per execution-methodology §2.3 steps 5-8:
    - The specific failures or review issues to address (be precise — quote the test names or issue numbers)
    - An instruction to make targeted fixes only, no unrelated changes
 3. Append its fix report to `log.md` under "Iteration N+1 → Fix".
-4. Re-dispatch the tester. Append to "Iteration N+1 → Test".
+4. Re-run the test stage: full profile → re-dispatch the tester and append to "Iteration N+1 → Test"; lightweight profile → re-run the type-check + existing suite yourself and append to "Iteration N+1 → Check (lightweight)".
 5. If green, re-dispatch the reviewer. Append to "Iteration N+1 → Review".
 6. Loop until reviewer approves — subject to execution-methodology §1.3 (iteration cap of 5).
 

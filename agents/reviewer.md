@@ -73,6 +73,10 @@ Run through this checklist:
 - **Design tokens:** are CSS custom properties / design tokens consistent with the UX spec's design language section?
 - **Interaction patterns:** do animations, transitions, and gestures match the spec? If the spec says "On hover: background lightens by 8%" and the code does something different, flag it.
 
+### 8. Loop profile (only when the orchestrator says the task ran `lightweight`)
+- The lightweight profile (execution-methodology §1.5) skips the test-authoring stage, so it is valid **only** when the task introduces no executable runtime behavior (pure type/interface declarations, constants, configuration, docs).
+- Confirm that is actually the case. If the diff contains runtime logic, branching, I/O, or any behavior that should be covered by a test, **say so explicitly** — the task must be upgraded to the full profile and have tests written before it can complete. Do not approve a behavioral change that shipped without tests just because it was labeled lightweight.
+
 ## What NOT to do
 
 - **Do not modify code.** You only review. Issues you find go back to the implementer.
@@ -88,6 +92,7 @@ Return a structured verdict:
 - **Code quality findings:** specific issues with file:line references, or "clean"
 - **Test quality findings:** specific gaps or design issues, or "adequate"
 - **UX adherence findings** *(design-heavy scopes only)*: component/microcopy/a11y/token/interaction compliance, or "N/A"
+- **Loop profile finding** *(lightweight tasks only)*: "correctly lightweight (no runtime behavior)" or "needs upgrade to full — found testable behavior at file:line", else "N/A"
 - **Downstream compatibility findings:** any concerns about upcoming tasks, or "compatible"
 - **Regressions:** none / details
 - **Issues to fix:** numbered list with file:line and the specific change requested, or "none"

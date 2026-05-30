@@ -65,6 +65,7 @@ This project was scaffolded with the `phased-dev` plugin. The full command set:
 | `/phased-dev:list-scopes` | Show all scopes in this project |
 | `/phased-dev:switch-scope <id>` | Switch the active scope (e.g., `project` or `feature/auth`) |
 | `/phased-dev:start-phase` | Dispatch the agent for the active scope's current phase |
+| `/phased-dev:resolve-questions [phase-or-doc]` | Walk through open questions / risks / known issues one at a time, with options, and record resolutions |
 | `/phased-dev:start-task <NN>` | Run the per-task dev loop (during `implement` phase) |
 | `/phased-dev:advance-phase` | Gated transition to next phase (requires user approval) |
 | `/phased-dev:rewind-phase <phase>` | Rewind the active scope to a previous phase (resets status, truncates history) |
