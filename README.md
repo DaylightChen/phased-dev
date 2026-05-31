@@ -41,7 +41,7 @@ Or symlink into your Claude plugins directory.
 
 ## Commands
 
-The full command set (10 commands, scope-agnostic):
+The full command set (11 commands, scope-agnostic):
 
 | Command | Purpose |
 |---------|---------|
@@ -50,6 +50,7 @@ The full command set (10 commands, scope-agnostic):
 | `/phased-dev:list-scopes` | Show all scopes in this project with their current phase |
 | `/phased-dev:switch-scope <id>` | Change the active scope (e.g., `project` or `feature/auth`) |
 | `/phased-dev:start-phase` | Dispatch the agent for the active scope's current phase (for any non-`implement` phase) |
+| `/phased-dev:resolve-questions [phase-or-doc]` | Walk through every open question, risk, and known issue in the active scope's docs one at a time, with options, and record each resolution |
 | `/phased-dev:start-task <NN>` | Run the per-task dev loop during the `implement` phase |
 | `/phased-dev:advance-phase` | Gated transition to next phase (requires explicit user approval) |
 | `/phased-dev:rewind-phase <phase>` | Rewind the active scope to a previous phase (resets status, truncates history) |
@@ -271,5 +272,7 @@ This is the main architectural benefit of v0.2.
 - **The methodologies live in your project, not in this plugin.** `/phased-dev:init-project` copies them in. You can edit them per-project — the subagents read them from your project's `docs/plan/`, not from the plugin.
 - **Scope state is the source of truth.** `docs/.phased-dev/scopes/<id>.json` is authoritative. `docs/STATUS.md` (project) and `docs/features/<name>/STATUS.md` (features) are human-readable mirrors and may briefly lag. Agents read JSON; commands write JSON.
 - **Completion markers gate phase advancement.** Each task writes a `completion.md` after its commit lands. The implement phase's `outputCheck` requires these files — `/phased-dev:advance-phase` cannot proceed until all tasks are done.
+- **Resolve open questions interactively.** Phase specs intentionally surface open questions, risks, and known issues. For long specs, run `/phased-dev:resolve-questions` (typically before `/phased-dev:advance-phase`) to be walked through each item one at a time — with details and options — and have your resolutions recorded in the decision/known-issues logs.
+- **Lightweight dev loop for trivial tasks.** The implement-phase dev loop (implement → test → review → fix) can run a `lightweight` profile that skips the test-authoring stage for tasks introducing no runtime behavior (pure types/interfaces, constants, config, docs). The type-check, full existing-suite regression run, and review still run, and a mis-classified task is upgraded back to the full loop. See `docs/plan/execution-methodology.md` §1.5.
 - **No hooks yet.** A future version may add pre-commit hooks for brief immutability and log presence.
 - **v0.2 is a breaking change.** Old phased-dev v0.1 projects need to re-run `/phased-dev:init-project` (or scaffold the new files manually) to use v0.2. No automated migration.

@@ -30,6 +30,8 @@ Each task must be completable within a single Claude Code session, including all
 - Large enough to produce a meaningful, self-contained unit of working software
 - A task that is too large should be split; a task that is too small should be merged with adjacent work
 
+When a task introduces no executable runtime behavior (pure type/interface declarations, constants, configuration, or docs), recommend the **lightweight** loop profile in its brief so the dev loop can skip the test-authoring stage (execution-methodology §1.5). Do this only for the obviously-trivial case — the default is **full**, and the end-of-task quality gate is identical for both profiles.
+
 ## 4. Task Document Structure
 
 Each task lives in its own directory under `docs/tasks/`:
@@ -46,6 +48,7 @@ Every `brief.md` includes:
 
 | Section | Purpose |
 |---------|---------|
+| **Loop profile** *(optional)* | `full` (default) or `lightweight`. Recommend `lightweight` only for tasks that introduce no executable runtime behavior (pure types/interfaces, constants, config, docs) — see execution-methodology §1.5. Omit (or `full`) for anything behavioral. |
 | **Goal** | What this task builds and why it matters in the larger system |
 | **Context files** | Exact file paths the agent should read before starting (not "read the codebase") |
 | **Downstream dependencies** | What later tasks will depend on from this task's output — specific interfaces, file paths, or behaviors that must be preserved. This gives the implementer and tester just enough big picture to avoid breaking downstream work without loading the full plan. |

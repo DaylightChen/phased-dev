@@ -2,6 +2,12 @@
 
 > Written in the plan phase. Immutable during implement-phase execution. An agent with zero prior context must be able to execute this task by reading only this file and the files it references.
 
+## Loop profile
+
+[`full` (default) or `lightweight`. Use `lightweight` only when this task introduces **no executable runtime behavior** — pure type/interface declarations, constants, configuration, or docs. See execution-methodology §1.5 for eligibility. When in doubt, omit this section or write `full`. The orchestrator confirms eligibility at dispatch; the reviewer can upgrade a mis-classified task back to `full`.]
+
+- Profile: full
+
 ## Goal
 
 [1-2 paragraphs: what this task builds and why it matters in the larger system. Be concrete about the outcome — describe the artifact (file, module, behavior) that exists at the end of this task that did not exist at the start.]

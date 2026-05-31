@@ -4,7 +4,7 @@
 
 ## 1. Per-Task Dev Loop
 
-Each task follows a repeating development loop. A task may go through multiple cycles of this loop until all acceptance criteria are met.
+Each task follows a repeating development loop. A task may go through multiple cycles of this loop until all acceptance criteria are met. Most tasks run the **full** loop below; tasks that introduce no runtime behavior may run a **lightweight** variant that skips the test-authoring stage (see §1.5).
 
 ```
 implement → test → code review → fix
@@ -53,6 +53,34 @@ See §3 for the escalation protocol.
 - Commit at the end of each completed task
 - Commit message references the task number and summarizes what was built
 - All tests must pass before committing
+
+### 1.5 Loop profiles
+
+Not every task warrants the same loop. A task that only declares interfaces, types, constants, or configuration introduces no executable runtime behavior, so authoring new behavioral tests for it is busywork — there is nothing to exercise. For these, the test-authoring stage can be skipped. **Skipping work is never an excuse to skip quality: the end-of-task quality gate (§4) is identical for every profile.**
+
+Two profiles exist:
+
+| Profile | Loop | When to use |
+|---------|------|-------------|
+| **full** (default) | implement → test → review → fix | Any task that adds or changes runtime behavior, logic, data flow, I/O, or anything observable at runtime. **This is the default; when in doubt, use it.** |
+| **lightweight** | implement → review → fix (no test-authoring stage) | Tasks that introduce **no executable runtime behavior**: pure type/interface declarations, type-only re-exports, constants with no logic, configuration/scaffolding, or docs-only changes. |
+
+**Eligibility for `lightweight` (all must hold):**
+
+- The task adds no executable runtime logic — no functions with bodies that do work, no branching, no I/O, no state changes. Type signatures, `interface`/`type` declarations, enums, plain constant values, and config entries qualify; a function that computes or transforms anything does not.
+- Nothing downstream can only be validated by running the code. If a later task's correctness depends on *behavior* this task introduces, it is not lightweight.
+- The change is small enough that review plus a type-check fully establishes correctness.
+
+If any condition is uncertain, the task is **full**. Lightweight is an optimization for the obviously-trivial case, not a judgment call to stretch.
+
+**The lightweight loop still guarantees quality.** Skipping the test-authoring stage does **not** skip verification:
+
+- The reviewer still runs, every iteration, with the full bar.
+- The type-checker still runs and must be clean (this is the primary correctness signal for interface/type tasks).
+- The **existing** full test suite still runs as a regression guard — a lightweight task must not break anything already covered.
+- The reviewer must confirm the task genuinely introduced no testable runtime behavior. **If it did** (the profile was mis-assigned), the task is upgraded to the **full** loop: the tester is dispatched and must author tests before the task can complete. A lightweight classification is a hypothesis the reviewer validates, not a free pass.
+
+The profile is recommended per task in the brief (see the planning methodology) and confirmed by the orchestrator at dispatch time.
 
 ## 2. Sub-Agent Driven Development
 
@@ -107,14 +135,14 @@ Examples of cross-boundary issues:
 
 ## 4. Verification Before Completion
 
-Before marking any task as complete:
+Before marking any task as complete — **regardless of loop profile (§1.5)**:
 
-1. Run all tests and confirm green output
+1. Run all tests and confirm green output. (Lightweight tasks add no new tests, but the existing suite must still pass as a regression guard.)
 2. Run type checking (e.g., `tsc --noEmit`) and confirm no errors
 3. Manually verify the acceptance criteria listed in the task document
 4. Ensure no regressions in previously completed functionality
 
-Evidence (actual command output) is required before claiming success. "It should work" is not acceptable.
+Evidence (actual command output) is required before claiming success. "It should work" is not acceptable. The lightweight profile removes the test-*authoring* stage, not this verification gate.
 
 ## 5. Task Directory Structure
 
