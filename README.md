@@ -31,30 +31,51 @@ It is heavyweight. Not every project warrants it. Use it for greenfield projects
 
 ## Install
 
-This plugin is not yet on a marketplace. Install locally:
+This plugin is not yet on a marketplace. Install locally.
+
+### Claude Code
 
 ```bash
 claude --plugin-dir /path/to/phased-dev
 ```
 
-Or symlink into your Claude plugins directory.
+Or symlink into your Claude plugins directory. In Claude Code the commands are namespaced as `/phased-dev:<command>`.
+
+### GitHub Copilot
+
+The same workflow ships as GitHub Copilot **custom agents** and **prompt files**, so it works in Copilot CLI and the Copilot coding agent. Copilot discovers these under `.github/`:
+
+- `.github/agents/*.md` — the 9 role agents (architect, planner, implementer, tester, reviewer, …), each with Copilot tool aliases (`read`, `edit`, `search`, `execute`, `web`, `agent`). Copilot selects them by inference from their `description`, and the orchestration prompts delegate to them via the `agent` tool.
+- `.github/prompts/*.prompt.md` — the 10 workflow commands, invoked as slash commands (`/init-project`, `/start-phase`, `/start-task`, `/advance-phase`, …) — i.e. the same names as the Claude commands but **without** the `phased-dev:` prefix.
+
+To use phased-dev with Copilot in your own project, copy both directories **and** the `templates/` directory into your repo root:
+
+```bash
+cp -r /path/to/phased-dev/.github/agents   .github/agents
+cp -r /path/to/phased-dev/.github/prompts  .github/prompts
+cp -r /path/to/phased-dev/templates        templates
+```
+
+The `templates/` directory is required: `/init-project` and `/start-feature` copy methodology and scope-config files from it. Under Copilot, `/init-project` scaffolds the project conventions file as `AGENTS.md` (Copilot's instruction file) instead of `CLAUDE.md`.
+
+> The Claude (`agents/`, `commands/`, `.claude-plugin/`) and Copilot (`.github/agents/`, `.github/prompts/`) definitions are kept in sync but are independent — installing one does not require the other.
 
 ## Commands
 
-The full command set (10 commands, scope-agnostic):
+The full command set (10 commands, scope-agnostic). In Claude Code use the `/phased-dev:` prefix; in GitHub Copilot use the bare `/` name (shown in parentheses):
 
 | Command | Purpose |
 |---------|---------|
-| `/phased-dev:init-project [name] [description]` | Scaffold the project structure: `docs/`, `docs/.phased-dev/`, project scope, methodology files |
-| `/phased-dev:phase-status` | Show the active scope's current phase and what's next |
-| `/phased-dev:list-scopes` | Show all scopes in this project with their current phase |
-| `/phased-dev:switch-scope <id>` | Change the active scope (e.g., `project` or `feature/auth`) |
-| `/phased-dev:start-phase` | Dispatch the agent for the active scope's current phase (for any non-`implement` phase) |
-| `/phased-dev:start-task <NN>` | Run the per-task dev loop during the `implement` phase |
-| `/phased-dev:advance-phase` | Gated transition to next phase (requires explicit user approval) |
-| `/phased-dev:rewind-phase <phase>` | Rewind the active scope to a previous phase (resets status, truncates history) |
-| `/phased-dev:generate-ux-preview` | Generate static HTML preview from the UX markdown spec (independent of phase gates) |
-| `/phased-dev:start-feature <name> [description]` | Create a new feature scope (asks: standard or design-heavy), scaffold its directory, set it active, dispatch the first-phase agent |
+| `/phased-dev:init-project [name] [description]` (`/init-project`) | Scaffold the project structure: `docs/`, `docs/.phased-dev/`, project scope, methodology files |
+| `/phased-dev:phase-status` (`/phase-status`) | Show the active scope's current phase and what's next |
+| `/phased-dev:list-scopes` (`/list-scopes`) | Show all scopes in this project with their current phase |
+| `/phased-dev:switch-scope <id>` (`/switch-scope`) | Change the active scope (e.g., `project` or `feature/auth`) |
+| `/phased-dev:start-phase` (`/start-phase`) | Dispatch the agent for the active scope's current phase (for any non-`implement` phase) |
+| `/phased-dev:start-task <NN>` (`/start-task`) | Run the per-task dev loop during the `implement` phase |
+| `/phased-dev:advance-phase` (`/advance-phase`) | Gated transition to next phase (requires explicit user approval) |
+| `/phased-dev:rewind-phase <phase>` (`/rewind-phase`) | Rewind the active scope to a previous phase (resets status, truncates history) |
+| `/phased-dev:generate-ux-preview` (`/generate-ux-preview`) | Generate static HTML preview from the UX markdown spec (independent of phase gates) |
+| `/phased-dev:start-feature <name> [description]` (`/start-feature`) | Create a new feature scope (asks: standard or design-heavy), scaffold its directory, set it active, dispatch the first-phase agent |
 
 ## Subagents
 
@@ -62,7 +83,7 @@ The full command set (10 commands, scope-agnostic):
 |-------|---------|------|
 | `brainstormer` | `brainstorm` phase (project scopes) | Product design |
 | `ux-designer` | `ux` phase (design-heavy project and feature scopes) | UX spec: design language, components, screens, flows, a11y contract, microcopy. For feature scope, extends the existing project design system. |
-| `ux-preview` | Any time after UX spec exists | Generates static HTML preview (3-7 key screens + tokens page) from the UX markdown spec. For human review only — not consumed by downstream agents. Invoked via `/phased-dev:generate-ux-preview`. |
+| `ux-preview` | Any time after UX spec exists | Generates static HTML preview (3-7 key screens + tokens page) from the UX markdown spec. For human review only — not consumed by downstream agents. Invoked via `/phased-dev:generate-ux-preview` (Copilot: `/generate-ux-preview`). |
 | `architect` | `engineering` phase (project scopes) | Engineering spec; respects upstream UX spec if present |
 | `feature-architect` | `engineering` phase (feature scopes) | Standard variant: combined product + engineering. Design-heavy variant: engineering-focused, referencing the UX spec. |
 | `planner` | `plan` phase (all scopes) | Task breakdown; covers UX deliverables when `paths.uxDir` is set |
@@ -70,7 +91,7 @@ The full command set (10 commands, scope-agnostic):
 | `tester` | `implement` phase (all scopes) | Tests + full suite + type-check |
 | `reviewer` | `implement` phase (all scopes) | Reviews against brief, full plan, and (for features) project architecture |
 
-Agents read scope state from `docs/.phased-dev/scopes/<id>.json`. They never write to it — commands do.
+In Claude Code these live in `agents/`; for GitHub Copilot they live in `.github/agents/` (with Copilot tool aliases). Agents read scope state from `docs/.phased-dev/scopes/<id>.json`. They never write to it — commands do.
 
 ## Workflow — project scope
 
@@ -177,7 +198,7 @@ The architect, feature-architect, and planner all check for `paths.uxDir` and ad
 
 ```
 your-project/
-├── CLAUDE.md                                 # Workflow + methodology pointer
+├── CLAUDE.md                                 # Workflow + methodology pointer (GitHub Copilot uses AGENTS.md instead)
 └── docs/
     ├── .phased-dev/
     │   ├── state.json                        # Active scope pointer
