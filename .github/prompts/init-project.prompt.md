@@ -34,6 +34,8 @@ You are scaffolding the phased-dev structure into the current working directory.
 
    **Common (both pipelines):**
 
+   > Note: the shared source template is named `templates/CLAUDE.md`, but under GitHub Copilot its contents are written to `AGENTS.md` (Copilot's instruction file). The source template is intentionally shared with the Claude Code plugin; only the destination filename differs.
+
    | Source | Destination |
    |--------|-------------|
    | `templates/CLAUDE.md` | `./AGENTS.md` (substitute placeholders) |
