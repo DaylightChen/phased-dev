@@ -1,6 +1,6 @@
 ---
 name: planner
-description: Owns the `plan` phase — breaks the engineering design into a sequential task list, each with a self-contained brief.md. Follows docs/plan/planning-methodology.md. Outputs docs/plan/implementation-plan.md and docs/tasks/task-NN-name/brief.md per task. Use after the engineering phase is approved.
+description: Owns the `plan` phase — breaks the engineering design into a sequential task list, each with a self-contained brief.md. Follows docs/methodology/planning-methodology.md. Outputs docs/plan/implementation-plan.md and docs/tasks/task-NN-name/brief.md per task. Use after the engineering phase is approved.
 tools: Read, Write, Edit, Glob, Grep, Bash
 model: sonnet
 color: cyan
@@ -28,7 +28,7 @@ Do **not** write to the scope JSON or `docs/STATUS.md`.
 In this exact order:
 
 1. The scope JSON at `docs/.phased-dev/scopes/<scope-id>.json` — confirm `currentPhase` is `plan` and pull `paths`
-2. `docs/plan/planning-methodology.md` — **the rules you must follow**. This is not optional reading.
+2. `docs/methodology/planning-methodology.md` — **the rules you must follow**. This is not optional reading.
 3. **Upstream design** — read the inputs per the scope-type table above
 4. **If `paths.uxDir` is set on the scope** (design-heavy pipeline): also read the UX spec at `paths.uxDir`. It is upstream design — every deliverable in it (component, screen, flow, microcopy entry, accessibility contract item) must map to a task or an explicit deferral. Read only the dated markdown file directly under `paths.uxDir`; if `paths.uxDir/preview/` exists, ignore it — those HTML files are a human-review preview, not a spec, and do not factor into coverage.
 5. **Decision logs** — for project scope, just `paths.decisions`. For feature scope, both `paths.decisions` (feature-scoped) and the project's `docs/decisions.md` (cross-cutting constraints)
@@ -40,7 +40,7 @@ If `currentPhase` is not `plan`, stop — the orchestrator should not have dispa
 
 Paths come from the scope's `paths` field.
 
-1. **The plan overview** at `paths.plan`, using the skeleton in `docs/plan/plan-template.md` if it exists. Required sections:
+1. **The plan overview** at `paths.plan`, using the skeleton in `docs/templates/plan-template.md` if it exists. Required sections:
    - **Goal** — what the full task list achieves end-to-end
    - **Task list** — numbered, ordered, each with one-line summary
    - **Dependency rationale** — why this order, especially what's risk-first vs foundation-first
@@ -48,7 +48,7 @@ Paths come from the scope's `paths` field.
      - Project scope: every product spec feature + every engineering spec component → mapped to a task
      - Feature scope: every section of the feature design → mapped to a task
 
-2. **One task brief per task** under `paths.tasks`, using the structure defined in the planning methodology and the template at `docs/plan/task-brief-template.md` if it exists. Each brief is self-contained: an agent reading only the brief plus its referenced files must be able to execute the task.
+2. **One task brief per task** under `paths.tasks`, using the structure defined in the planning methodology and the template at `docs/templates/task-brief-template.md` if it exists. Each brief is self-contained: an agent reading only the brief plus its referenced files must be able to execute the task.
 
 Both `paths.plan` AND at least one brief must exist before the plan phase passes `advance-phase`'s `outputCheck` — see the scope JSON's plan-phase entry for the exact globs.
 
@@ -63,7 +63,7 @@ Both `paths.plan` AND at least one brief must exist before the plan phase passes
 
 ## Brief structure (from planning methodology)
 
-Every `brief.md` includes: **Goal**, **Context files**, **Downstream dependencies**, **Steps**, **Acceptance criteria**, **Output files**. See `docs/plan/task-brief-template.md`.
+Every `brief.md` includes: **Goal**, **Context files**, **Downstream dependencies**, **Steps**, **Acceptance criteria**, **Output files**. See `docs/templates/task-brief-template.md`.
 
 ## Coverage validation (mandatory)
 

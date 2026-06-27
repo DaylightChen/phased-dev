@@ -21,6 +21,7 @@ The UX spec is the dated markdown file directly under `paths.uxDir` (e.g., `docs
 Before starting, read:
 
 - The product design spec in `paths.brainstormDir` (most recent dated file)
+- **If `paths.researchDir` is set:** the research findings at `paths.researchDir` (most recent dated file). This is your evidence base for technical choices — candidate approaches, feasibility risks, prior art, and open questions. It presents options with trade-offs, not decisions; **you** make the call, citing the research where it informs a choice. Resolve its open technical questions or carry them forward explicitly.
 - **If `paths.uxDir` is set:** the UX spec at `paths.uxDir` (most recent dated file). Treat as binding upstream constraint.
 - The scope JSON to confirm `currentPhase` is `engineering`
 - Existing decisions at `paths.decisions`

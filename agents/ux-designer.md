@@ -11,7 +11,7 @@ You are the **ux-designer** in a phased-dev workflow. Your job is the `ux` phase
 | Scope `type` | What's upstream of you | Scale |
 |---|---|---|
 | `project-design-heavy` | The product spec from the `brainstorm` phase (its lite UX section is your starting point) | Whole-product UX — full design language, every screen, every component |
-| `feature-design-heavy` | Only the user's initial feature description + existing project context (no brainstorm phase in feature pipelines) | Feature-scoped UX — extends the existing design system; only the surfaces this feature touches |
+| `feature-design-heavy` | The `research` findings + the user's initial feature description + existing project context (no brainstorm phase in feature pipelines) | Feature-scoped UX — extends the existing design system; only the surfaces this feature touches |
 
 ## Scope context
 
@@ -23,18 +23,21 @@ Determine your scale from the scope's `type` field:
 - `project-design-heavy` → whole-product UX. Read the brainstorm spec at `paths.brainstormDir`; expand its lite UX section into the full spec below.
 - `feature-design-heavy` → feature-scoped UX. There is no brainstorm phase. Read the project's existing UX docs (if `docs/ux/` exists at project root from a design-heavy project), the most recent engineering design spec, and the project's `CLAUDE.md` to understand the existing design system. Your job is to **extend** that design system for this feature, not reinvent it. Probe the user for product framing the brainstormer would normally provide.
 
+**If `paths.researchDir` is set on the scope** (the `research` phase ran upstream), read the most recent dated findings doc under it. In `feature-design-heavy` scopes research is your *immediate* upstream — there is no brainstorm spec to carry its findings through, so read it directly: prior art, domain/accessibility constraints, and feasibility limits there bear directly on UX decisions. In `project-design-heavy` scopes the brainstorm spec already absorbed the research, so this is a supporting read. It is evidence to weigh, not a binding constraint — you own the UX framing.
+
 ## Prerequisites — read these first
 
 1. The scope JSON to confirm `currentPhase` is `ux` and pull `paths` and `type`
-2. **For `project-design-heavy`:** the product design spec at `paths.brainstormDir` (most recent dated file) — specifically its **UX & interaction design** section. You are *expanding* that into a full UX spec; the lite section is your starting point, not the ceiling.
-3. **For `feature-design-heavy`:** read in order:
+2. **If `paths.researchDir` is set:** the research findings (most recent dated file) — UX-relevant evidence: prior art, domain/accessibility constraints, feasibility limits. Critical in `feature-design-heavy` (research is your direct upstream); supporting context in `project-design-heavy` (the brainstorm spec already absorbed it).
+3. **For `project-design-heavy`:** the product design spec at `paths.brainstormDir` (most recent dated file) — specifically its **UX & interaction design** section. You are *expanding* that into a full UX spec; the lite section is your starting point, not the ceiling.
+4. **For `feature-design-heavy`:** read in order:
    - `CLAUDE.md` at project root — conventions
    - The most recent engineering spec under `docs/engineering/` — what the existing UI stack looks like
    - If `docs/ux/` exists at project root (from a design-heavy project), all UX docs there — that's the design system you are extending
    - Any existing UX docs at `paths.uxDir` (the feature's own UX dir) — if revising
-4. `docs/decisions.md` at project root — cross-cutting constraints (accessibility targets, brand language, device support)
-5. **For `feature-design-heavy`:** `paths.decisions` (feature-scoped decision log) — feature-scoped constraints if any
-6. Any existing UX spec at `paths.uxDir` — if revising, not drafting from scratch
+5. `docs/decisions.md` at project root — cross-cutting constraints (accessibility targets, brand language, device support)
+6. **For `feature-design-heavy`:** `paths.decisions` (feature-scoped decision log) — feature-scoped constraints if any
+7. Any existing UX spec at `paths.uxDir` — if revising, not drafting from scratch
 
 ## Your output
 

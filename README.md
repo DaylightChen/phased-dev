@@ -8,10 +8,12 @@
 
 A **scope** is a unit of phased work. The shipped scope types:
 
-- **Project, standard** (`project`, `type: "project"`) — a whole greenfield project where UX fits naturally inside the engineering phase. Pipeline: `brainstorm → engineering → plan → implement`. Right for backends, tooling, CLIs, dev tools, infra.
-- **Project, design-heavy** (`project`, `type: "project-design-heavy"`) — a greenfield project where UX *is* the differentiator. Pipeline: `brainstorm → ux → engineering → plan → implement`. Adds a dedicated `ux` phase with a `ux-designer` agent producing a full UX spec (design language, component inventory, screen wireframes, accessibility contract, microcopy library) before the engineering phase. Opt in by choosing `design-heavy` when `/phased-dev:init-project` asks.
-- **Feature, standard** (`feature/<name>`, `type: "feature"`) — a feature added to an existing project. Pipeline: `engineering → plan → implement` (product framing + engineering collapse into a single spec since the upstream architecture is already given).
-- **Feature, design-heavy** (`feature/<name>`, `type: "feature-design-heavy"`) — a UX-led feature (onboarding rewrite, editor mode, search redesign). Pipeline: `ux → engineering → plan → implement`. The `ux-designer` runs first and extends the existing project design system; the `feature-architect` then produces an engineering-focused spec that references the UX spec. Opt in by choosing `design-heavy` when `/phased-dev:start-feature` asks.
+- **Project, standard** (`project`, `type: "project"`) — a whole greenfield project where UX fits naturally inside the engineering phase. Pipeline: `research → brainstorm → engineering → plan → implement`. Right for backends, tooling, CLIs, dev tools, infra.
+- **Project, design-heavy** (`project`, `type: "project-design-heavy"`) — a greenfield project where UX *is* the differentiator. Pipeline: `research → brainstorm → ux → engineering → plan → implement`. Adds a dedicated `ux` phase with a `ux-designer` agent producing a full UX spec (design language, component inventory, screen wireframes, accessibility contract, microcopy library) before the engineering phase. Opt in by choosing `design-heavy` when `/phased-dev:init-project` asks.
+- **Feature, standard** (`feature/<name>`, `type: "feature"`) — a feature added to an existing project. Pipeline: `research → engineering → plan → implement` (product framing + engineering collapse into a single spec since the upstream architecture is already given).
+- **Feature, design-heavy** (`feature/<name>`, `type: "feature-design-heavy"`) — a UX-led feature (onboarding rewrite, editor mode, search redesign). Pipeline: `research → ux → engineering → plan → implement`. The `ux-designer` extends the existing project design system; the `feature-architect` then produces an engineering-focused spec that references the UX spec. Opt in by choosing `design-heavy` when `/phased-dev:start-feature` asks.
+
+Every pipeline opens with a `research` phase: the `researcher` agent gathers prior art, technical feasibility, and domain constraints as upstream evidence for the phases that follow. It makes no product or engineering decisions. On well-trodden ground a short "no external research needed" doc clears the phase gate.
 
 Each scope's pipeline, current phase, and output paths are recorded in `docs/.phased-dev/scopes/<id>.json`. A single global `docs/.phased-dev/state.json` records which scope is **active**. All commands implicitly operate on the active scope. Use `/phased-dev:switch-scope <id>` to change focus.
 
@@ -60,6 +62,7 @@ The full command set (10 commands, scope-agnostic):
 
 | Agent | Used in | Role |
 |-------|---------|------|
+| `researcher` | `research` phase (all scopes) | Evidence-gathering: prior art, feasibility, domain constraints, open questions. No product or engineering decisions. |
 | `brainstormer` | `brainstorm` phase (project scopes) | Product design |
 | `ux-designer` | `ux` phase (design-heavy project and feature scopes) | UX spec: design language, components, screens, flows, a11y contract, microcopy. For feature scope, extends the existing project design system. |
 | `ux-preview` | Any time after UX spec exists | Generates static HTML preview (3-7 key screens + tokens page) from the UX markdown spec. For human review only — not consumed by downstream agents. Invoked via `/phased-dev:generate-ux-preview`. |
@@ -77,9 +80,13 @@ Agents read scope state from `docs/.phased-dev/scopes/<id>.json`. They never wri
 ```
 /phased-dev:init-project myproject "A widget for X"
   → creates docs/.phased-dev/state.json + scopes/project.json
-  → active scope: project; current phase: brainstorm
+  → active scope: project; current phase: research
   ↓
-/phased-dev:start-phase            → brainstormer drafts product spec
+/phased-dev:start-phase            → researcher gathers prior art, feasibility, constraints
+  ↓ (user reviews)
+/phased-dev:advance-phase          → currentPhase becomes "brainstorm"
+  ↓
+/phased-dev:start-phase            → brainstormer drafts product spec (reads research findings)
   ↓ (user reviews)
 /phased-dev:advance-phase          → currentPhase becomes "engineering"
   ↓
@@ -98,16 +105,18 @@ Agents read scope state from `docs/.phased-dev/scopes/<id>.json`. They never wri
 
 ## Workflow — design-heavy project scope (opt-in)
 
-Choose `design-heavy` when `/phased-dev:init-project` asks. Same shape as standard, with a `ux` phase inserted between `brainstorm` and `engineering`:
+Choose `design-heavy` when `/phased-dev:init-project` asks. Same shape as standard, with a `ux` phase inserted between `brainstorm` and `engineering` (and `research` first, as in every pipeline):
 
 ```
 /phased-dev:init-project myapp "A consumer X app"
   → asks: standard or design-heavy?
   → user picks design-heavy
   → creates docs/.phased-dev/state.json + scopes/project.json (type: project-design-heavy)
-  → also creates docs/ux/
+  → also creates docs/research/ and docs/ux/
   ↓
-/phased-dev:start-phase            → brainstormer drafts product spec
+/phased-dev:start-phase            → researcher gathers prior art, feasibility, constraints
+  ↓ (user reviews + /phased-dev:advance-phase)
+/phased-dev:start-phase            → brainstormer drafts product spec (reads research findings)
   ↓ (user reviews + /phased-dev:advance-phase)
 /phased-dev:start-phase            → ux-designer drafts UX spec (design language, components,
                                       screens, flows, a11y contract, microcopy library)
@@ -131,7 +140,11 @@ The architect and planner both check for `paths.uxDir` on the scope JSON — if 
   → asks: standard or design-heavy? user picks standard
   → creates docs/.phased-dev/scopes/feature/my-feature.json (type: feature)
   → sets active scope to feature/my-feature
-  → dispatches feature-architect (the first phase is "engineering")
+  → dispatches researcher (the first phase is "research")
+  ↓ (user reviews docs/features/my-feature/research/)
+/phased-dev:advance-phase          → currentPhase becomes "engineering"
+  ↓
+/phased-dev:start-phase            → feature-architect drafts engineering.md (reads research findings)
   ↓ (user reviews docs/features/my-feature/engineering.md)
 /phased-dev:advance-phase          → currentPhase becomes "plan"
   ↓
@@ -148,15 +161,19 @@ The architect and planner both check for `paths.uxDir` on the scope JSON — if 
 
 ## Workflow — feature scope (design-heavy, opt-in)
 
-For UX-led features. Same shape as standard feature but with a `ux` phase first:
+For UX-led features. Same shape as standard feature but with a `ux` phase before engineering (`research` runs first, as everywhere):
 
 ```
 /phased-dev:start-feature onboarding-rewrite "Redesign onboarding"
   → asks: standard or design-heavy? user picks design-heavy
   → creates docs/.phased-dev/scopes/feature/onboarding-rewrite.json
                                                  (type: feature-design-heavy)
-  → also creates docs/features/onboarding-rewrite/ux/
-  → dispatches ux-designer (the first phase is "ux", not "engineering")
+  → also creates docs/features/onboarding-rewrite/research/ and .../ux/
+  → dispatches researcher (the first phase is "research")
+  ↓ (user reviews research at docs/features/onboarding-rewrite/research/)
+/phased-dev:advance-phase          → currentPhase becomes "ux"
+  ↓
+/phased-dev:start-phase            → ux-designer drafts UX spec
   ↓ (user reviews UX spec at docs/features/onboarding-rewrite/ux/)
 /phased-dev:advance-phase          → currentPhase becomes "engineering"
   ↓
@@ -187,15 +204,21 @@ your-project/
     ├── STATUS.md                             # Human-readable mirror of project scope
     ├── decisions.md                          # Project-level decision log
     ├── known-issues.md                       # Deferred bugs / debt
+    ├── research/
+    │   └── YYYY-MM-DD-<slug>-research.md     # research phase output (evidence, prior art, feasibility)
     ├── brainstorm/
     │   └── YYYY-MM-DD-<slug>-design.md       # brainstorm phase output (product design spec)
     ├── engineering/
     │   └── YYYY-MM-DD-engineering-spec.md    # engineering phase output
-    ├── plan/
+    ├── methodology/
     │   ├── planning-methodology.md           # Rules for the plan phase
-    │   ├── execution-methodology.md          # Rules for the implement phase
+    │   └── execution-methodology.md          # Rules for the implement phase
+    ├── templates/
+    │   ├── plan-template.md
     │   ├── task-brief-template.md
     │   ├── log-template.md
+    │   └── task-completion-template.md
+    ├── plan/
     │   └── implementation-plan.md            # plan phase output
     └── tasks/
         └── task-NN-name/                     # One per task
@@ -268,7 +291,7 @@ This is the main architectural benefit of v0.2.
 
 ## Notes
 
-- **The methodologies live in your project, not in this plugin.** `/phased-dev:init-project` copies them in. You can edit them per-project — the subagents read them from your project's `docs/plan/`, not from the plugin.
+- **The methodologies live in your project, not in this plugin.** `/phased-dev:init-project` copies them in. You can edit them per-project — the subagents read them from your project's `docs/methodology/`, not from the plugin.
 - **Scope state is the source of truth.** `docs/.phased-dev/scopes/<id>.json` is authoritative. `docs/STATUS.md` (project) and `docs/features/<name>/STATUS.md` (features) are human-readable mirrors and may briefly lag. Agents read JSON; commands write JSON.
 - **Completion markers gate phase advancement.** Each task writes a `completion.md` after its commit lands. The implement phase's `outputCheck` requires these files — `/phased-dev:advance-phase` cannot proceed until all tasks are done.
 - **No hooks yet.** A future version may add pre-commit hooks for brief immutability and log presence.

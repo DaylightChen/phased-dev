@@ -5,6 +5,11 @@
   "name": null,
   "pipeline": [
     {
+      "phase": "research",
+      "agent": "researcher",
+      "outputCheck": "docs/research/*.md"
+    },
+    {
       "phase": "brainstorm",
       "agent": "brainstormer",
       "outputCheck": "docs/brainstorm/*.md"
@@ -31,9 +36,10 @@
       ]
     }
   ],
-  "currentPhase": "brainstorm",
+  "currentPhase": "research",
   "phaseStatus": "not_started",
   "paths": {
+    "researchDir": "docs/research/",
     "brainstormDir": "docs/brainstorm/",
     "engineeringDir": "docs/engineering/",
     "plan": "docs/plan/implementation-plan.md",

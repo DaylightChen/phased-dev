@@ -8,13 +8,13 @@
 project
 
 ## Current Phase
-**brainstorm** (not started)
+**research** (not started)
 
 ## Last Completed
 _(none yet)_
 
 ## What's Next
-- Run `/phased-dev:start-phase` to begin the `brainstorm` phase: produce the product design spec under `docs/brainstorm/`
+- Run `/phased-dev:start-phase` to begin the `research` phase: gather prior art, feasibility, and domain constraints under `docs/research/`
 
 ## Task Progress
 _(appears after the `plan` phase produces task briefs)_

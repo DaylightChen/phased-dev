@@ -14,7 +14,7 @@ For the task you are dispatched on, read **in this order**:
 
 1. The task `brief.md` — specifically: **Goal**, **Context files**, **Steps**, **Downstream dependencies**, **Output files**.
 2. Every file listed under "Context files" in the brief.
-3. `docs/plan/execution-methodology.md` — review §1 (dev loop) and §2.2 (your context level) if you haven't recently.
+3. `docs/methodology/execution-methodology.md` — review §1 (dev loop) and §2.2 (your context level) if you haven't recently.
 
 You do **not** need to read the full implementation plan. The brief is self-contained for a reason.
 
