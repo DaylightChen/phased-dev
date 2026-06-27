@@ -128,7 +128,7 @@ docs/tasks/task-NN-name/
 
 **`brief.md`** is the task plan written in the plan phase. It stays clean and unmodified during execution. This is what agents read.
 
-**`log.md`** is created when execution begins by copying the template from `docs/plan/log-template.md`. It is the only file that gets written to during execution.
+**`log.md`** is created when execution begins by copying the template from `docs/templates/log-template.md`. It is the only file that gets written to during execution.
 
 ## 6. Documentation During Implementation
 
@@ -144,12 +144,12 @@ What must be captured:
 - **Escalations** — cross-boundary problems that required user input (see Section 3).
 - **Per-criterion verification** — the Completion section lists every acceptance criterion from the brief with evidence of how it was verified.
 
-See `docs/plan/log-template.md` for the full template with all required sections.
+See `docs/templates/log-template.md` for the full template with all required sections.
 
 ### 7. Completion Marker
 
 When a task's dev loop finishes and the commit lands, the orchestrator writes a `completion.md` file in the task directory. This file marks the task as done and is required by the implement phase's `outputCheck` — without it, `/phased-dev:advance-phase` cannot verify the implement phase is complete.
 
-The file uses **YAML frontmatter** for machine-readable fields (`status`, `commit`, `completedAt`, `iterations`) and a short prose body for human readers. The frontmatter is the canonical record — commands and tooling read it without parsing markdown. See `docs/plan/task-completion-template.md` for the template.
+The file uses **YAML frontmatter** for machine-readable fields (`status`, `commit`, `completedAt`, `iterations`) and a short prose body for human readers. The frontmatter is the canonical record — commands and tooling read it without parsing markdown. See `docs/templates/task-completion-template.md` for the template.
 
 This ensures future sessions can understand not just what was built, but how and why.

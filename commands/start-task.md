@@ -33,9 +33,9 @@ The scope (project vs feature) is determined by `docs/.phased-dev/state.json`. T
    - If `paths.engineering` is set (feature-style scope): that file must exist. If missing, the feature engineering spec is gone.
    If any upstream output is missing, stop and tell the user which files are absent.
 
-6. **Initialize the log.** If `log.md` doesn't exist in the task directory, copy `docs/plan/log-template.md` (or `${CLAUDE_PLUGIN_ROOT}/templates/log-template.md` if the project copy is missing) to `<task-dir>/log.md` and customize the heading to reference the scope and task.
+6. **Initialize the log.** If `log.md` doesn't exist in the task directory, copy `docs/templates/log-template.md` (or `${CLAUDE_PLUGIN_ROOT}/templates/log-template.md` if the project copy is missing) to `<task-dir>/log.md` and customize the heading to reference the scope and task.
 
-7. **Read `docs/plan/execution-methodology.md`** — it defines the rules for the dev loop. This command defines dispatch details; the methodology defines the protocol. If they conflict, the methodology wins.
+7. **Read `docs/methodology/execution-methodology.md`** — it defines the rules for the dev loop. This command defines dispatch details; the methodology defines the protocol. If they conflict, the methodology wins.
 
 ## The dev loop
 
@@ -118,7 +118,7 @@ When the reviewer approves:
 
 4. **Update `log.md`.** After the commit lands, update the "Completion → Commit" line with the actual SHA.
 
-5. **Write the task completion marker.** Create a `completion.md` file in the task directory (same directory as `brief.md` and `log.md`). Use the template at `docs/plan/task-completion-template.md` (or `${CLAUDE_PLUGIN_ROOT}/templates/task-completion-template.md` if the project copy is missing). Populate the YAML frontmatter explicitly:
+5. **Write the task completion marker.** Create a `completion.md` file in the task directory (same directory as `brief.md` and `log.md`). Use the template at `docs/templates/task-completion-template.md` (or `${CLAUDE_PLUGIN_ROOT}/templates/task-completion-template.md` if the project copy is missing). Populate the YAML frontmatter explicitly:
 
    ```yaml
    ---

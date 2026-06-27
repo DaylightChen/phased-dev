@@ -11,12 +11,14 @@ You are scaffolding the phased-dev structure into the current working directory.
 
 1. **Parse arguments.** If `$ARGUMENTS` is non-empty, treat the first token as the project name and the rest (joined) as the one-line description. If empty or partial, ask the user for what's missing.
 
-2. **Check for existing scaffolding.** If any of `CLAUDE.md`, `docs/STATUS.md`, `docs/.phased-dev/state.json`, or `docs/plan/planning-methodology.md` already exist, **stop and ask the user** before overwriting. Do not silently overwrite.
+2. **Check for existing scaffolding.** If any of `CLAUDE.md`, `docs/STATUS.md`, `docs/.phased-dev/state.json`, or `docs/methodology/planning-methodology.md` already exist, **stop and ask the user** before overwriting. Do not silently overwrite.
 
 3. **Ask which pipeline to use.** Present the choice to the user and wait for their answer (use the AskUserQuestion tool if available, otherwise ask plainly):
 
-   - **`standard`** (default) — 4 phases: `brainstorm → engineering → plan → implement`. Right for most projects: backend services, tooling, CLIs, dev tools, infra, anything where UX is light or naturally fits inside the engineering phase.
-   - **`design-heavy`** — 5 phases: `brainstorm → ux → engineering → plan → implement`. Adds a dedicated `ux` phase that produces a full UX spec (design language, component inventory, screen wireframes, accessibility contract, microcopy library) before the engineering phase. Right for consumer apps, editors, design tools, marketing sites — anything where UX *is* the differentiator.
+   - **`standard`** (default) — 5 phases: `research → brainstorm → engineering → plan → implement`. Right for most projects: backend services, tooling, CLIs, dev tools, infra, anything where UX is light or naturally fits inside the engineering phase.
+   - **`design-heavy`** — 6 phases: `research → brainstorm → ux → engineering → plan → implement`. Adds a dedicated `ux` phase that produces a full UX spec (design language, component inventory, screen wireframes, accessibility contract, microcopy library) before the engineering phase. Right for consumer apps, editors, design tools, marketing sites — anything where UX *is* the differentiator.
+
+   Both pipelines now open with a `research` phase (evidence-gathering: prior art, feasibility, domain constraints) that feeds the brainstorm. For a project building on well-trodden patterns, the researcher can write a short "no external research needed" doc to satisfy the phase gate quickly.
 
    If the user replies "skip" or just confirms the default, use `standard`. Recommend `standard` unless the project is clearly design-driven.
 
@@ -24,9 +26,12 @@ You are scaffolding the phased-dev structure into the current working directory.
    - `docs/`
    - `docs/.phased-dev/`
    - `docs/.phased-dev/scopes/`
+   - `docs/research/`
    - `docs/brainstorm/`
    - `docs/engineering/`
    - `docs/plan/`
+   - `docs/methodology/`
+   - `docs/templates/`
    - `docs/tasks/`
    - **If pipeline = `design-heavy`, also create:** `docs/ux/`
 
@@ -42,12 +47,12 @@ You are scaffolding the phased-dev structure into the current working directory.
    | `${CLAUDE_PLUGIN_ROOT}/templates/scope-model.md` | `./docs/.phased-dev/scope-model.md` |
    | `${CLAUDE_PLUGIN_ROOT}/templates/decisions.md` | `./docs/decisions.md` |
    | `${CLAUDE_PLUGIN_ROOT}/templates/known-issues.md` | `./docs/known-issues.md` |
-   | `${CLAUDE_PLUGIN_ROOT}/templates/planning-methodology.md` | `./docs/plan/planning-methodology.md` |
-   | `${CLAUDE_PLUGIN_ROOT}/templates/execution-methodology.md` | `./docs/plan/execution-methodology.md` |
-   | `${CLAUDE_PLUGIN_ROOT}/templates/log-template.md` | `./docs/plan/log-template.md` |
-   | `${CLAUDE_PLUGIN_ROOT}/templates/task-brief-template.md` | `./docs/plan/task-brief-template.md` |
-   | `${CLAUDE_PLUGIN_ROOT}/templates/plan-template.md` | `./docs/plan/plan-template.md` |
-   | `${CLAUDE_PLUGIN_ROOT}/templates/task-completion-template.md` | `./docs/plan/task-completion-template.md` |
+   | `${CLAUDE_PLUGIN_ROOT}/templates/planning-methodology.md` | `./docs/methodology/planning-methodology.md` |
+   | `${CLAUDE_PLUGIN_ROOT}/templates/execution-methodology.md` | `./docs/methodology/execution-methodology.md` |
+   | `${CLAUDE_PLUGIN_ROOT}/templates/log-template.md` | `./docs/templates/log-template.md` |
+   | `${CLAUDE_PLUGIN_ROOT}/templates/task-brief-template.md` | `./docs/templates/task-brief-template.md` |
+   | `${CLAUDE_PLUGIN_ROOT}/templates/plan-template.md` | `./docs/templates/plan-template.md` |
+   | `${CLAUDE_PLUGIN_ROOT}/templates/task-completion-template.md` | `./docs/templates/task-completion-template.md` |
 
    **Pipeline-specific scope template:**
 
@@ -63,8 +68,8 @@ You are scaffolding the phased-dev structure into the current working directory.
 6. **Report.** Tell the user:
    - Which files were created
    - Which pipeline was selected and what its phase sequence is
-   - That the `project` scope is active, currently in phase `brainstorm` (not started)
-   - Suggest: run `/phased-dev:start-phase` to begin the brainstorm phase
+   - That the `project` scope is active, currently in phase `research` (not started)
+   - Suggest: run `/phased-dev:start-phase` to begin the research phase
 
 ## Notes
 

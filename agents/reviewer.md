@@ -26,7 +26,7 @@ For the task you are dispatched on, read **in this order**:
    - For feature scope: the single file at `paths.engineering`
 7. **If `paths.uxDir` is set (design-heavy scope) — the UX spec.** Read the most recent dated markdown file directly under `paths.uxDir`. This is binding upstream — the implementer must respect its component inventory, microcopy, accessibility contract, interaction patterns, and design tokens. Ignore `paths.uxDir/preview/` (HTML preview is for human review only).
 8. **If `paths.engineering` is set (feature-style scope) — additional project context:** the project's most recent engineering spec under `docs/engineering/` and the project root `CLAUDE.md`. The feature's own engineering spec (step 6) tells you what the feature commits to; the project context tells you what's load-bearing *outside the feature*. You catch both classes of "works in isolation, breaks elsewhere" issues.
-9. `docs/plan/execution-methodology.md` §1.1 (Code review stage) and §2.2 (your context level).
+9. `docs/methodology/execution-methodology.md` §1.1 (Code review stage) and §2.2 (your context level).
 10. **Decision logs** — to confirm the implementation honors recorded decisions:
     - `paths.decisions` (always)
     - If `paths.engineering` is set (feature-style scope), also `docs/decisions.md` at project root if present (cross-cutting)

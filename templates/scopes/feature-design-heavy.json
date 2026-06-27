@@ -5,6 +5,11 @@
   "name": "{{FEATURE_NAME}}",
   "pipeline": [
     {
+      "phase": "research",
+      "agent": "researcher",
+      "outputCheck": "docs/features/{{FEATURE_NAME}}/research/*.md"
+    },
+    {
       "phase": "ux",
       "agent": "ux-designer",
       "outputCheck": "docs/features/{{FEATURE_NAME}}/ux/*.md"
@@ -31,9 +36,10 @@
       ]
     }
   ],
-  "currentPhase": "ux",
+  "currentPhase": "research",
   "phaseStatus": "not_started",
   "paths": {
+    "researchDir": "docs/features/{{FEATURE_NAME}}/research/",
     "uxDir": "docs/features/{{FEATURE_NAME}}/ux/",
     "engineering": "docs/features/{{FEATURE_NAME}}/engineering.md",
     "plan": "docs/features/{{FEATURE_NAME}}/plan.md",

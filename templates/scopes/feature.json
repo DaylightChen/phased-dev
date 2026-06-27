@@ -5,6 +5,11 @@
   "name": "{{FEATURE_NAME}}",
   "pipeline": [
     {
+      "phase": "research",
+      "agent": "researcher",
+      "outputCheck": "docs/features/{{FEATURE_NAME}}/research/*.md"
+    },
+    {
       "phase": "engineering",
       "agent": "feature-architect",
       "outputCheck": "docs/features/{{FEATURE_NAME}}/engineering.md"
@@ -26,9 +31,10 @@
       ]
     }
   ],
-  "currentPhase": "engineering",
+  "currentPhase": "research",
   "phaseStatus": "not_started",
   "paths": {
+    "researchDir": "docs/features/{{FEATURE_NAME}}/research/",
     "engineering": "docs/features/{{FEATURE_NAME}}/engineering.md",
     "plan": "docs/features/{{FEATURE_NAME}}/plan.md",
     "tasks": "docs/features/{{FEATURE_NAME}}/tasks/",

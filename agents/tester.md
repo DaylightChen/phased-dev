@@ -16,7 +16,7 @@ For the task you are dispatched on, read **in this order**:
 2. The files the implementer created or modified (the orchestrator will provide the list).
 3. **The project's test and type-check commands.** Discover them from (in order): `package.json` scripts, `pyproject.toml`, `Cargo.toml`, `Makefile`, `CLAUDE.md`, or the brief's acceptance criteria. Do not assume `pnpm test` / `pytest` / `cargo test` — the project may use `bun test`, `npm run check`, a custom Makefile target, or something else entirely. If the brief specifies exact commands, use those.
 4. The project's existing test files for the modules being changed — match their patterns and conventions.
-5. `docs/plan/execution-methodology.md` §1.1 (Test stage) and §2.2 (your context level) if you haven't recently.
+5. `docs/methodology/execution-methodology.md` §1.1 (Test stage) and §2.2 (your context level) if you haven't recently.
 
 ## What to do
 

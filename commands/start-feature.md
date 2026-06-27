@@ -9,8 +9,10 @@ User invoked with: $ARGUMENTS
 
 This creates a **feature scope** for adding a feature to an existing project. Two pipeline options:
 
-- **`standard`** (default) — 3 phases: `engineering → plan → implement`. The feature-architect produces a combined product + engineering spec. Right for most features.
-- **`design-heavy`** — 4 phases: `ux → engineering → plan → implement`. Adds a dedicated UX phase first (the ux-designer produces a full UX spec — design language scoped to the feature, components, screens, flows, a11y, microcopy), then the feature-architect produces the engineering spec against that. Right for UX-led features like onboarding rewrites, editor modes, search redesign, settings overhauls.
+- **`standard`** (default) — 4 phases: `research → engineering → plan → implement`. The feature-architect produces a combined product + engineering spec. Right for most features.
+- **`design-heavy`** — 5 phases: `research → ux → engineering → plan → implement`. Adds a dedicated UX phase (the ux-designer produces a full UX spec — design language scoped to the feature, components, screens, flows, a11y, microcopy), then the feature-architect produces the engineering spec against that. Right for UX-led features like onboarding rewrites, editor modes, search redesign, settings overhauls.
+
+Both pipelines open with a `research` phase (prior art, feasibility, how the feature fits the existing codebase) that feeds the engineering (or UX) phase. For a feature on well-trodden patterns, the researcher can write a short "no external research needed" doc to clear the gate.
 
 ## Pre-flight checks
 
@@ -30,6 +32,7 @@ This creates a **feature scope** for adding a feature to an existing project. Tw
 
 1. **Create directories:**
    - `docs/features/<feature-name>/`
+   - `docs/features/<feature-name>/research/` (the `research` phase runs first in both pipelines)
    - `docs/features/<feature-name>/tasks/` (empty for now)
    - `docs/.phased-dev/scopes/feature/` (if not present)
    - **If pipeline = `design-heavy`, also create:** `docs/features/<feature-name>/ux/`
@@ -48,7 +51,7 @@ This creates a **feature scope** for adding a feature to an existing project. Tw
    - `${CLAUDE_PLUGIN_ROOT}/templates/decisions.md` → `docs/features/<feature-name>/decisions.md` (feature-scoped decision log)
    - `${CLAUDE_PLUGIN_ROOT}/templates/feature-status.md` → `docs/features/<feature-name>/STATUS.md`. Substitute both placeholders:
      - `{{FEATURE_NAME}}` → the parsed feature name
-     - `{{INITIAL_PHASE}}` → the first phase of the chosen pipeline (`engineering` for `standard`, `ux` for `design-heavy`). Do not hardcode — read it from the scope JSON's `pipeline[0].phase` you just wrote, or derive from the pipeline choice. STATUS.md must agree with the scope JSON's `currentPhase`.
+     - `{{INITIAL_PHASE}}` → the first phase of the chosen pipeline (`research` for both `standard` and `design-heavy`). Do not hardcode — read it from the scope JSON's `pipeline[0].phase` you just wrote. STATUS.md must agree with the scope JSON's `currentPhase`.
 
 4. **Register and activate the scope.** Update `docs/.phased-dev/state.json`:
    - Add `"feature/<feature-name>"` to `scopes` (if not already present)
@@ -56,18 +59,15 @@ This creates a **feature scope** for adding a feature to an existing project. Tw
 
 ## Dispatch
 
-The agent for the first phase comes from the scope's `pipeline[0].agent`:
-
-- **Standard pipeline** → dispatch `feature-architect` (covers product + engineering in one doc)
-- **Design-heavy pipeline** → dispatch `ux-designer` (UX phase first; the feature-architect comes later, after `/phased-dev:advance-phase`)
+The agent for the first phase comes from the scope's `pipeline[0].agent`. Both pipelines now open with the `research` phase, so dispatch `researcher` in both cases (the `feature-architect` and, for design-heavy, the `ux-designer` come later, after `/phased-dev:advance-phase`).
 
 Pass the agent:
 
 - The active scope ID: `feature/<feature-name>`
 - An instruction to read `docs/.phased-dev/scopes/feature/<feature-name>.json` for its output paths and to confirm `currentPhase` matches its role
 - The user's one-line description ($ARGUMENTS)
-- An instruction to read the project's `CLAUDE.md`, the latest engineering spec under `docs/engineering/`, the project-level `docs/decisions.md` (if present, for cross-cutting constraints), and any pre-existing feature-level decisions
-- An instruction to probe the user with sharp questions before writing
+- An instruction to read the project's `CLAUDE.md`, the latest engineering spec under `docs/engineering/`, the project-level `docs/decisions.md` (if present, for cross-cutting constraints), and to Glob/Grep for code the feature is likely to touch — research is grounded in the existing system
+- An instruction to ask 2-4 sharpening questions if the brief is too vague to research, before sweeping
 
 Set `phaseStatus` to `in_progress` in the scope file before dispatching. After the agent returns done, set it to `complete_awaiting_approval` (the orchestrator owns scope-state writes — agents do not).
 

@@ -12,6 +12,8 @@ You are the **brainstormer** in a phased-dev workflow. Your job is the `brainsto
 
 The orchestrator dispatches you with a scope ID. Read `docs/.phased-dev/scopes/<scope-id>.json` first — use `paths.brainstormDir` as your output directory. Do **not** write to the scope JSON or `docs/STATUS.md`; the orchestrator handles state.
 
+**If `paths.researchDir` is set on the scope** (research runs before brainstorm in every current pipeline, so this is the normal case), read the most recent dated findings doc under it before probing the user. It is your evidence base: prior art, feasibility, domain constraints, and open questions. Use it to ask sharper questions and to avoid re-asking things research already settled. It is input, not a constraint — you still own the product framing; treat its findings as evidence to weigh, and its "open questions" as items to resolve with the user. Ignore nothing in it silently — if you reject a finding, the spec should say why.
+
 ## Your output
 
 A single dated markdown file in `paths.brainstormDir` named `YYYY-MM-DD-<project-slug>-design.md`.

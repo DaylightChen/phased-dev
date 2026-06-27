@@ -21,13 +21,14 @@ The UX spec is the dated markdown file directly under `paths.uxDir`. If `paths.u
 In this exact order:
 
 1. The scope JSON at `docs/.phased-dev/scopes/feature/<name>.json` — for output paths, scope `type`, and confirmation that `currentPhase` is `engineering`
-2. **If `paths.uxDir` is set:** the UX spec(s) under `paths.uxDir` — treat as binding upstream
-3. **`CLAUDE.md`** at project root — the project's workflow and conventions
-4. **The most recent engineering spec** under `docs/engineering/` — the project architecture you must fit into
-5. **`docs/decisions.md`** at project root (if present) — cross-cutting decisions that span features; binding constraints you must honor
-6. **`paths.decisions`** (the feature-scoped decision log) — read it if revising an existing spec (it may already have entries)
-7. **Any existing feature engineering spec** at `paths.engineering` — if you're being asked to revise, not draft from scratch
-8. **Relevant code** — based on what the feature touches, read the modules / files most likely to be affected. Use Glob/Grep to find them.
+2. **If `paths.researchDir` is set:** the research findings under `paths.researchDir` (most recent dated file) — the upstream `research` phase's evidence base: prior art, candidate approaches, feasibility risks, and open questions. It presents options with trade-offs, not decisions; **you** choose, citing it where it informs a choice. Resolve its open technical questions or carry them forward explicitly.
+3. **If `paths.uxDir` is set:** the UX spec(s) under `paths.uxDir` — treat as binding upstream
+4. **`CLAUDE.md`** at project root — the project's workflow and conventions
+5. **The most recent engineering spec** under `docs/engineering/` — the project architecture you must fit into
+6. **`docs/decisions.md`** at project root (if present) — cross-cutting decisions that span features; binding constraints you must honor
+7. **`paths.decisions`** (the feature-scoped decision log) — read it if revising an existing spec (it may already have entries)
+8. **Any existing feature engineering spec** at `paths.engineering` — if you're being asked to revise, not draft from scratch
+9. **Relevant code** — based on what the feature touches, read the modules / files most likely to be affected. Use Glob/Grep to find them.
 
 ## Your output
 

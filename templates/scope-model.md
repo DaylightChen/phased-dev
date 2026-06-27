@@ -14,10 +14,12 @@ Scope IDs:
 
 The **scope ID** stays the same regardless of pipeline. What varies is the scope JSON's `type` and `pipeline` fields:
 
-- `type: "project"` — standard 4-phase pipeline (`brainstorm → engineering → plan → implement`)
-- `type: "project-design-heavy"` — 5-phase pipeline with a dedicated UX phase (`brainstorm → ux → engineering → plan → implement`); the scope's `paths` field includes `uxDir`
-- `type: "feature"` — 3-phase pipeline (`engineering → plan → implement`)
-- `type: "feature-design-heavy"` — 4-phase pipeline with a dedicated UX phase (`ux → engineering → plan → implement`); the scope's `paths` field includes `uxDir`
+- `type: "project"` — standard 5-phase pipeline (`research → brainstorm → engineering → plan → implement`); the scope's `paths` field includes `researchDir`
+- `type: "project-design-heavy"` — 6-phase pipeline with a dedicated UX phase (`research → brainstorm → ux → engineering → plan → implement`); the scope's `paths` field includes `researchDir` and `uxDir`
+- `type: "feature"` — 4-phase pipeline (`research → engineering → plan → implement`); the scope's `paths` field includes `researchDir`
+- `type: "feature-design-heavy"` — 5-phase pipeline with a dedicated UX phase (`research → ux → engineering → plan → implement`); the scope's `paths` field includes `researchDir` and `uxDir`
+
+Every pipeline now opens with a `research` phase (the `researcher` agent gathers prior art, feasibility, and domain constraints before any framing). Its output is upstream *evidence* for the brainstormer/architect, not a deliverable that the planner maps to tasks.
 
 Adding a new pipeline type means adding a new template at `templates/scopes/<type>.json` and (if it introduces a new phase) a new agent. Existing commands operate on the scope's `pipeline` array as data, so they work unchanged.
 
@@ -43,12 +45,13 @@ Adding a new pipeline type means adding a new template at `templates/scopes/<typ
   "type": "project",
   "name": null,
   "pipeline": [
+    { "phase": "research",    "agent": "researcher",   "outputCheck": "docs/research/*.md" },
     { "phase": "brainstorm",  "agent": "brainstormer", "outputCheck": "docs/brainstorm/*.md" },
     { "phase": "engineering", "agent": "architect",    "outputCheck": "docs/engineering/*.md" },
     { "phase": "plan",        "agent": "planner",      "outputCheck": ["docs/plan/implementation-plan.md", "docs/tasks/task-*/brief.md"] },
     { "phase": "implement",   "agent": null,           "outputCheck": ["docs/tasks/task-*/brief.md", "docs/tasks/task-*/completion.md"] }
   ],
-  "currentPhase": "brainstorm",
+  "currentPhase": "research",
   "phaseStatus": "not_started",
   "paths": { /* scope-specific output paths */ },
   "history": []
@@ -71,9 +74,9 @@ Adding a new pipeline type means adding a new template at `templates/scopes/<typ
   - `complete_awaiting_approval` — the phase's agent has reported done; user approval pending
   - `complete` — terminal phase (`implement`) when all tasks committed (optional; not strictly enforced)
 - **`paths`** — scope-specific output paths. Agents read these instead of hardcoding paths. Different per scope type:
-  - Project (standard): `brainstormDir`, `engineeringDir`, `plan`, `tasks`, `decisions`
+  - Project (standard): `researchDir`, `brainstormDir`, `engineeringDir`, `plan`, `tasks`, `decisions`
   - Project (design-heavy): same as standard plus `uxDir` (the UX phase's output directory)
-  - Feature (standard): `engineering`, `plan`, `tasks`, `decisions`
+  - Feature (standard): `researchDir`, `engineering`, `plan`, `tasks`, `decisions`
   - Feature (design-heavy): same as standard feature plus `uxDir` (scoped under the feature's directory)
 - **`history`** — list of phase transitions, appended by `/phased-dev:advance-phase`. Format: `{ "phase": "brainstorm", "completedAt": "...", "approvedAt": "..." }`. Can be truncated by `/phased-dev:rewind-phase`.
 

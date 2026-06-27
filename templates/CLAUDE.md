@@ -6,15 +6,18 @@
 
 This project follows a phased agent-driven development process organized by **scopes**:
 
-- **Project scope (standard)** — whole-project workflow with 4 phases: `brainstorm` → `engineering` → `plan` → `implement`
-- **Project scope (design-heavy, opt-in)** — 5 phases for design-driven products: `brainstorm` → `ux` → `engineering` → `plan` → `implement`. The `ux` phase produces a full UX spec (design language, components, screens, flows, a11y contract, microcopy) that the architect must respect. Chosen at `/phased-dev:init-project` time.
-- **Feature scope (standard)** — adding a feature to this project, 3 phases (product framing + engineering collapse into one `engineering` phase): `engineering` → `plan` → `implement`
-- **Feature scope (design-heavy, opt-in)** — UX-led features (onboarding rewrites, editor modes, search redesigns), 4 phases: `ux` → `engineering` → `plan` → `implement`. The `ux-designer` extends the existing project design system; the `feature-architect` then produces an engineering spec referencing the UX spec. Chosen at `/phased-dev:start-feature` time.
+- **Project scope (standard)** — whole-project workflow with 5 phases: `research` → `brainstorm` → `engineering` → `plan` → `implement`
+- **Project scope (design-heavy, opt-in)** — 6 phases for design-driven products: `research` → `brainstorm` → `ux` → `engineering` → `plan` → `implement`. The `ux` phase produces a full UX spec (design language, components, screens, flows, a11y contract, microcopy) that the architect must respect. Chosen at `/phased-dev:init-project` time.
+- **Feature scope (standard)** — adding a feature to this project, 4 phases (product framing + engineering collapse into one `engineering` phase): `research` → `engineering` → `plan` → `implement`
+- **Feature scope (design-heavy, opt-in)** — UX-led features (onboarding rewrites, editor modes, search redesigns), 5 phases: `research` → `ux` → `engineering` → `plan` → `implement`. The `ux-designer` extends the existing project design system; the `feature-architect` then produces an engineering spec referencing the UX spec. Chosen at `/phased-dev:start-feature` time.
+
+Every pipeline opens with a `research` phase: the `researcher` agent gathers prior art, technical feasibility, and domain constraints as evidence for the phases that follow. It makes no product or engineering decisions. For work on well-trodden ground, a short "no external research needed" doc satisfies the phase gate.
 
 Which pipeline a given scope uses is recorded in that scope's JSON under the `type` field (`project`, `project-design-heavy`, `feature`, or `feature-design-heavy`).
 
 | Phase | Purpose | Output |
 |-------|---------|--------|
+| `research` | Gather evidence: prior art, technical feasibility, domain constraints, open questions. No decisions. | `docs/research/` (project) or `docs/features/<name>/research/` (feature) |
 | `brainstorm` | Define product: features, target users, edge cases, lite UX shape (project only) | `docs/brainstorm/` |
 | `ux` *(design-heavy scopes only)* | Define visual & interaction design: language, components, screens, flows, a11y, microcopy | `docs/ux/` (project) or `docs/features/<name>/ux/` (feature) |
 | `engineering` | Define engineering: architecture, tech stack, interfaces. Respects upstream UX spec if present. | `docs/engineering/` (project) or `docs/features/<name>/engineering.md` (feature) |
@@ -41,8 +44,8 @@ Scope state lives at `docs/.phased-dev/`:
 This project has documented methodologies that all agents must follow:
 
 - **Scope model** (`docs/.phased-dev/scope-model.md`) — how scopes, pipelines, and phase state work. Read this before writing or modifying any phased-dev command/agent.
-- **Planning** (`docs/plan/planning-methodology.md`) — How tasks are structured, ordered, and documented. Read this before writing or modifying a plan.
-- **Execution** (`docs/plan/execution-methodology.md`) — How tasks are implemented via the dev loop (implement → test → code review → fix) with sub-agent roles. Read this before executing any task.
+- **Planning** (`docs/methodology/planning-methodology.md`) — How tasks are structured, ordered, and documented. Read this before writing or modifying a plan.
+- **Execution** (`docs/methodology/execution-methodology.md`) — How tasks are implemented via the dev loop (implement → test → code review → fix) with sub-agent roles. Read this before executing any task.
 
 These are not guidelines — they are requirements. Do not skip them.
 
