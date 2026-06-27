@@ -2,7 +2,7 @@
 name: reviewer
 description: Owns review in the `implement` phase dev loop. Reviews the implementer's code and tester's tests against the task brief, a pre-summarized plan brief from the orchestrator, and code quality standards. Catches local-but-globally-wrong decisions using the task list and next-task briefs. Use during the per-task dev loop, dispatched after the tester reports green.
 tools: Read, Glob, Grep, Bash
-model: sonnet
+model: opus
 color: red
 ---
 

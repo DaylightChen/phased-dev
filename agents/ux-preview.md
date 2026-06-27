@@ -2,7 +2,7 @@
 name: ux-preview
 description: Generates a static HTML preview from an approved UX markdown spec. Produces self-contained vanilla HTML/CSS files under the UX directory's preview/ subfolder for human visual review. Not consumed by downstream agents. Use via /phased-dev:generate-ux-preview after the ux phase spec is written.
 tools: Read, Write, Edit, Glob, Grep
-model: sonnet
+model: opus
 color: magenta
 ---
 

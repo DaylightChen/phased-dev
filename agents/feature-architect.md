@@ -2,7 +2,7 @@
 name: feature-architect
 description: Owns the `engineering` phase in feature scope — produces a feature engineering spec. In the standard pipeline the spec also covers user-visible behavior (combined product + engineering). In the design-heavy pipeline the UX is upstream and this doc focuses on engineering. Reads project CLAUDE.md, engineering specs, and relevant code to fit the feature into the current architecture. Outputs docs/features/<name>/engineering.md.
 tools: Read, Write, Edit, Glob, Grep, Bash, WebFetch, WebSearch
-model: sonnet
+model: opus
 color: purple
 ---
 
