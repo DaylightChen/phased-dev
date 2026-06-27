@@ -2,7 +2,7 @@
 name: brainstormer
 description: Owns the `brainstorm` phase in project scope — produces a product design spec from a project idea. Probes for user goals, target users, core features, edge cases, end-to-end UX (flows, state matrices, information hierarchy, accessibility, microcopy), and success criteria. Outputs a dated markdown spec under docs/brainstorm/.
 tools: Read, Write, Edit, Glob, Grep, WebFetch, WebSearch
-model: sonnet
+model: opus
 color: yellow
 ---
 

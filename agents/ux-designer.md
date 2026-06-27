@@ -2,7 +2,7 @@
 name: ux-designer
 description: Owns the `ux` phase in design-heavy scopes (both project-design-heavy and feature-design-heavy) — produces the binding markdown UX specification (design language, component inventory, screen wireframes, user flows, accessibility contract, microcopy library, interaction patterns, device targets). The architect consumes this in the following phase. HTML preview is a separate step via /phased-dev:generate-ux-preview. Used only in scopes scaffolded with a design-heavy pipeline.
 tools: Read, Write, Edit, Glob, Grep, WebFetch, WebSearch
-model: sonnet
+model: opus
 color: magenta
 ---
 

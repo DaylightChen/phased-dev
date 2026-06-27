@@ -2,7 +2,7 @@
 name: implementer
 description: Owns implementation in the `implement` phase dev loop. Writes production code for a single task brief. Does NOT write or run tests. Reads goal, context files, steps, and downstream dependencies from the brief. Reports what was built. Use during the per-task dev loop, dispatched by the orchestrator.
 tools: Read, Write, Edit, Glob, Grep, Bash
-model: sonnet
+model: opus
 color: green
 ---
 

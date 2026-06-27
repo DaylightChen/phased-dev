@@ -2,7 +2,7 @@
 name: architect
 description: Owns the `engineering` phase in project scope — produces the engineering spec from the approved product design. Picks tech stack, architecture, module boundaries, data models, key interfaces. Outputs dated specs under docs/engineering/. Use after the brainstorm phase is approved (and, in design-heavy projects, after the ux phase is approved).
 tools: Read, Write, Edit, Glob, Grep, Bash, WebFetch, WebSearch
-model: sonnet
+model: opus
 color: blue
 ---
 

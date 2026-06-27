@@ -2,7 +2,7 @@
 name: planner
 description: Owns the `plan` phase — breaks the engineering design into a sequential task list, each with a self-contained brief.md. Follows docs/methodology/planning-methodology.md. Outputs docs/plan/implementation-plan.md and docs/tasks/task-NN-name/brief.md per task. Use after the engineering phase is approved.
 tools: Read, Write, Edit, Glob, Grep, Bash
-model: sonnet
+model: opus
 color: cyan
 ---
 

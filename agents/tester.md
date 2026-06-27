@@ -2,7 +2,7 @@
 name: tester
 description: Owns testing in the `implement` phase dev loop. Writes tests for the implementer's output, runs the full test suite, and reports pass/fail with specifics. Reads goal, acceptance criteria, downstream dependencies, and output files from the brief. Use during the per-task dev loop, dispatched after the implementer.
 tools: Read, Write, Edit, Glob, Grep, Bash
-model: sonnet
+model: opus
 color: orange
 ---
 
