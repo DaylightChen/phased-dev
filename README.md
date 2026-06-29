@@ -112,7 +112,7 @@ Choose `design-heavy` when `/phased-dev:init-project` asks. Same shape as standa
   → asks: standard or design-heavy?
   → user picks design-heavy
   → creates docs/.phased-dev/state.json + scopes/project.json (type: project-design-heavy)
-  → also creates docs/research/ and docs/ux/
+  → also creates docs/project/research/ and docs/project/ux/
   ↓
 /phased-dev:start-phase            → researcher gathers prior art, feasibility, constraints
   ↓ (user reviews + /phased-dev:advance-phase)
@@ -141,11 +141,11 @@ The architect and planner both check for `paths.uxDir` on the scope JSON — if 
   → creates docs/.phased-dev/scopes/feature/my-feature.json (type: feature)
   → sets active scope to feature/my-feature
   → dispatches researcher (the first phase is "research")
-  ↓ (user reviews docs/features/my-feature/research/)
+  ↓ (user reviews docs/feature/my-feature/research/)
 /phased-dev:advance-phase          → currentPhase becomes "engineering"
   ↓
-/phased-dev:start-phase            → feature-architect drafts engineering.md (reads research findings)
-  ↓ (user reviews docs/features/my-feature/engineering.md)
+/phased-dev:start-phase            → feature-architect drafts the engineering spec (reads research findings)
+  ↓ (user reviews docs/feature/my-feature/engineering/)
 /phased-dev:advance-phase          → currentPhase becomes "plan"
   ↓
 /phased-dev:start-phase            → planner produces feature plan + briefs
@@ -168,17 +168,17 @@ For UX-led features. Same shape as standard feature but with a `ux` phase before
   → asks: standard or design-heavy? user picks design-heavy
   → creates docs/.phased-dev/scopes/feature/onboarding-rewrite.json
                                                  (type: feature-design-heavy)
-  → also creates docs/features/onboarding-rewrite/research/ and .../ux/
+  → also creates docs/feature/onboarding-rewrite/research/ and .../ux/
   → dispatches researcher (the first phase is "research")
-  ↓ (user reviews research at docs/features/onboarding-rewrite/research/)
+  ↓ (user reviews research at docs/feature/onboarding-rewrite/research/)
 /phased-dev:advance-phase          → currentPhase becomes "ux"
   ↓
 /phased-dev:start-phase            → ux-designer drafts UX spec
-  ↓ (user reviews UX spec at docs/features/onboarding-rewrite/ux/)
+  ↓ (user reviews UX spec at docs/feature/onboarding-rewrite/ux/)
 /phased-dev:advance-phase          → currentPhase becomes "engineering"
   ↓
-/phased-dev:start-phase            → feature-architect produces engineering-focused
-                                     engineering.md that references the UX spec
+/phased-dev:start-phase            → feature-architect produces an engineering-focused
+                                     spec (under engineering/) that references the UX spec
   ↓ (user reviews + advance)
 /phased-dev:start-phase            → planner produces tasks; coverage walks the
                                      full UX spec (components, screens, microcopy, a11y)
@@ -201,30 +201,31 @@ your-project/
     │   ├── scope-model.md                    # Reference for the scope abstraction
     │   └── scopes/
     │       └── project.json                  # Project scope config
-    ├── STATUS.md                             # Human-readable mirror of project scope
-    ├── decisions.md                          # Project-level decision log
-    ├── known-issues.md                       # Deferred bugs / debt
-    ├── research/
-    │   └── YYYY-MM-DD-<slug>-research.md     # research phase output (evidence, prior art, feasibility)
-    ├── brainstorm/
-    │   └── YYYY-MM-DD-<slug>-design.md       # brainstorm phase output (product design spec)
-    ├── engineering/
-    │   └── YYYY-MM-DD-engineering-spec.md    # engineering phase output
-    ├── methodology/
+    ├── methodology/                          # Shared across all scopes
     │   ├── planning-methodology.md           # Rules for the plan phase
     │   └── execution-methodology.md          # Rules for the implement phase
-    ├── templates/
+    ├── templates/                            # Shared across all scopes
     │   ├── plan-template.md
     │   ├── task-brief-template.md
     │   ├── log-template.md
     │   └── task-completion-template.md
-    ├── plan/
-    │   └── implementation-plan.md            # plan phase output
-    └── tasks/
-        └── task-NN-name/                     # One per task
-            ├── brief.md                      # Immutable during execution
-            ├── log.md                        # Created at task start
-            └── completion.md                 # Written after task commit (marks task as done)
+    └── project/                              # The project scope's own folder
+        ├── STATUS.md                         # Human-readable mirror of project scope
+        ├── decisions.md                      # Project-level decision log
+        ├── known-issues.md                   # Deferred bugs / debt
+        ├── research/
+        │   └── YYYY-MM-DD-<slug>-research.md # research phase output (evidence, prior art, feasibility)
+        ├── brainstorm/
+        │   └── YYYY-MM-DD-<slug>-design.md   # brainstorm phase output (product design spec)
+        ├── engineering/
+        │   └── YYYY-MM-DD-engineering-spec.md # engineering phase output
+        ├── plan/
+        │   └── implementation-plan.md        # plan phase output
+        └── tasks/
+            └── task-NN-name/                 # One per task
+                ├── brief.md                  # Immutable during execution
+                ├── log.md                    # Created at task start
+                └── completion.md             # Written after task commit (marks task as done)
 ```
 
 **If pipeline = design-heavy, additionally:**
@@ -232,8 +233,9 @@ your-project/
 ```
 your-project/
 └── docs/
-    └── ux/
-        └── YYYY-MM-DD-ux-spec.md             # ux phase output — source of truth
+    └── project/
+        └── ux/
+            └── YYYY-MM-DD-ux-spec.md         # ux phase output — source of truth
 ```
 
 The HTML preview (`preview/` directory) is generated separately via `/phased-dev:generate-ux-preview` — it is not part of the phase output. Downstream agents (architect, planner, reviewer) ignore it. The markdown spec is the only binding output of the `ux` phase.
@@ -247,12 +249,16 @@ your-project/
     │   └── scopes/
     │       └── feature/
     │           └── my-feature.json           # Feature scope config
-    └── features/
-        └── my-feature/
+    └── feature/
+        └── my-feature/                       # Peer of project/ — same internal shape
             ├── STATUS.md                     # Human-readable mirror of this feature scope
-            ├── engineering.md                # engineering phase output (combined product + engineering)
             ├── decisions.md                  # Feature-scoped decision log
-            ├── plan.md                       # plan phase output
+            ├── research/
+            │   └── YYYY-MM-DD-<slug>-research.md
+            ├── engineering/
+            │   └── YYYY-MM-DD-<slug>-engineering.md  # engineering phase output (combined product + engineering)
+            ├── plan/
+            │   └── implementation-plan.md    # plan phase output
             └── tasks/
                 └── task-NN-name/
                     ├── brief.md
@@ -265,7 +271,7 @@ your-project/
 ```
 your-project/
 └── docs/
-    └── features/
+    └── feature/
         └── my-feature/
             └── ux/
                 └── YYYY-MM-DD-ux-spec.md     # ux phase output (feature-scoped) — source of truth
@@ -273,7 +279,7 @@ your-project/
 
 Same rule as project scope: the HTML preview is generated separately via `/phased-dev:generate-ux-preview`; downstream agents ignore it; only the markdown spec binds.
 
-The feature-scoped `decisions.md` is the write target for feature-local decisions. The project-level `docs/decisions.md` is reserved for cross-cutting decisions that span multiple features.
+The feature-scoped `decisions.md` is the write target for feature-local decisions. The project-level `docs/project/decisions.md` is reserved for cross-cutting decisions that span multiple features.
 
 ## Adding new scope types
 
@@ -292,7 +298,7 @@ This is the main architectural benefit of v0.2.
 ## Notes
 
 - **The methodologies live in your project, not in this plugin.** `/phased-dev:init-project` copies them in. You can edit them per-project — the subagents read them from your project's `docs/methodology/`, not from the plugin.
-- **Scope state is the source of truth.** `docs/.phased-dev/scopes/<id>.json` is authoritative. `docs/STATUS.md` (project) and `docs/features/<name>/STATUS.md` (features) are human-readable mirrors and may briefly lag. Agents read JSON; commands write JSON.
+- **Scope state is the source of truth.** `docs/.phased-dev/scopes/<id>.json` is authoritative. `docs/project/STATUS.md` (project) and `docs/feature/<name>/STATUS.md` (features) are human-readable mirrors and may briefly lag. Agents read JSON; commands write JSON.
 - **Completion markers gate phase advancement.** Each task writes a `completion.md` after its commit lands. The implement phase's `outputCheck` requires these files — `/phased-dev:advance-phase` cannot proceed until all tasks are done.
 - **No hooks yet.** A future version may add pre-commit hooks for brief immutability and log presence.
 - **v0.2 is a breaking change.** Old phased-dev v0.1 projects need to re-run `/phased-dev:init-project` (or scaffold the new files manually) to use v0.2. No automated migration.

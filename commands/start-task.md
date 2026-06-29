@@ -17,11 +17,11 @@ The scope (project vs feature) is determined by `docs/.phased-dev/state.json`. T
 
 2. **Read the active scope.** Get `activeScope` from `state.json`, then read `docs/.phased-dev/scopes/<activeScope>.json`. Note:
    - `currentPhase` — must be `implement`. If not, stop and tell the user the active scope is in phase `<currentPhase>`; they should run `/phased-dev:start-phase` for that phase first, or switch scopes.
-   - `paths.tasks` — the tasks directory for this scope (e.g., `docs/tasks/` or `docs/features/<name>/tasks/`)
+   - `paths.tasks` — the tasks directory for this scope (e.g., `docs/project/tasks/` or `docs/feature/<name>/tasks/`)
    - `paths.plan` — the plan file (used by the reviewer)
    - `paths.decisions` — the decision log for this scope
    - `type` — recorded in the scope JSON for reference; commands branch on path presence, not type strings.
-   - Check `paths.engineeringDir` (project-style) vs `paths.engineering` (feature-style) to determine scope shape.
+   - Check `paths.brainstormDir` to determine scope shape: present = project-style, absent = feature-style. Both scope types keep their engineering spec in a folder at `paths.engineeringDir`.
 
 3. **Locate the task directory.** Glob `<paths.tasks>task-${ARGUMENTS}-*/`. If zero matches, stop and tell the user the task number doesn't exist in this scope (suggest they check the plan). If multiple matches, list them and ask the user to disambiguate.
 
@@ -29,8 +29,7 @@ The scope (project vs feature) is determined by `docs/.phased-dev/state.json`. T
 
 5. **Verify upstream output exists.** Check that the files the reviewer will need are present:
    - `paths.plan` — the implementation plan. If missing, the plan phase output is gone; tell the user to re-run `/phased-dev:start-phase` for the `plan` phase.
-   - If `paths.engineeringDir` is set (project-style scope): at least one file under it. If missing, the engineering spec is gone.
-   - If `paths.engineering` is set (feature-style scope): that file must exist. If missing, the feature engineering spec is gone.
+   - `paths.engineeringDir` (set for both project and feature scopes): at least one file under it. If missing, the engineering spec is gone.
    If any upstream output is missing, stop and tell the user which files are absent.
 
 6. **Initialize the log.** If `log.md` doesn't exist in the task directory, copy `docs/templates/log-template.md` (or `${CLAUDE_PLUGIN_ROOT}/templates/log-template.md` if the project copy is missing) to `<task-dir>/log.md` and customize the heading to reference the scope and task.
@@ -71,9 +70,9 @@ Append its report to `log.md` under "Iteration 1 → Test" per execution-methodo
 - The diff (run `git diff` to capture it)
 - The tester's report
 - **The reviewer brief** (task list + dependency rationale + next 2-3 task briefs) instead of the full plan file. The reviewer uses this to catch local-but-globally-wrong decisions without needing the entire plan in context.
-- The active scope's engineering spec — if `paths.engineeringDir` is set, use it (project-style); if `paths.engineering` is set, use that file (feature-style). The reviewer must confirm the implementation respects the architecture, not just the plan.
+- The active scope's engineering spec — the most recent file under `paths.engineeringDir` (set for both project and feature scopes). The reviewer must confirm the implementation respects the architecture, not just the plan.
 - **If `paths.uxDir` is set:** also instruct the reviewer to read the UX spec (the most recent markdown file under `paths.uxDir`). This catches microcopy, a11y, and component deviations.
-- **If `paths.engineering` is set (feature-style scope):** also instruct the reviewer to read the project's most recent engineering spec under `docs/engineering/` and the project root `CLAUDE.md`. This catches "works in isolation, breaks the existing project" cases.
+- **If the scope is feature-style (no `paths.brainstormDir`):** also instruct the reviewer to read the project's most recent engineering spec under `docs/project/engineering/` and the project root `CLAUDE.md`. This catches "works in isolation, breaks the existing project" cases.
 
 Append its report to `log.md` under "Iteration 1 → Review".
 
@@ -98,7 +97,7 @@ Per execution-methodology §2.3 steps 5-8:
 Per execution-methodology §1.3: the dev loop is bounded at **5 iterations**. If iteration 5 ends without reviewer approval, stop and follow the escalation protocol (execution-methodology §3). Record an Escalation section in `log.md` and surface concrete options to the user:
 - Revise the brief (the planner's spec for this task may be wrong)
 - Revise upstream design (the engineering spec / UX spec may be wrong)
-- Defer to `docs/known-issues.md` and proceed (only acceptable for non-blocking issues)
+- Defer to `docs/project/known-issues.md` and proceed (only acceptable for non-blocking issues)
 - Force-approve and commit (only if the user explicitly decides the recurring finding is bikeshedding)
 
 Wait for the user's decision before any further dispatch.
@@ -131,7 +130,7 @@ When the reviewer approves:
 
    Replace the placeholder name in the H1 heading with the actual task name. The body is human prose only — do not duplicate frontmatter fields into the body. This file is required by the implement phase's `outputCheck`; without it, `/phased-dev:advance-phase` cannot verify the implement phase is complete.
 
-6. **Update status mirror** (project: `docs/STATUS.md`, feature: `docs/features/<name>/STATUS.md`):
+6. **Update status mirror** (project: `docs/project/STATUS.md`, feature: `docs/feature/<name>/STATUS.md`):
    - "Last Completed": add a line for this task with the commit SHA
    - "What's Next": update to point at the next task, or "All tasks complete" if this was the last one
    - **Task Progress table:** the table was initialized by `/phased-dev:advance-phase` when entering the implement phase (all tasks "pending"). Update the current task's row to "done (`<SHA>`)" and the next task's row to "in progress". If the table doesn't exist, do **not** reconstruct it inline — that path was a known drift surface. Stop and tell the user the implement phase was entered without going through `/phased-dev:advance-phase`; they should run `/phased-dev:advance-phase` (or, if already in implement, regenerate the status mirror by re-running it after a no-op rewind) before continuing. The table format is owned by `advance-phase`; only `advance-phase` writes it.

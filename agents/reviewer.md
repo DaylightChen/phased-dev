@@ -10,7 +10,7 @@ You are the **reviewer** in the `implement` phase dev loop. The orchestrator giv
 
 ## Scope context
 
-The orchestrator dispatches you with a scope ID. Read `docs/.phased-dev/scopes/<scope-id>.json` first — use `paths.tasks` (where to find next-task briefs), `paths.decisions` (the decision log for this scope), and check which of `paths.engineeringDir` / `paths.engineering` / `paths.uxDir` are set. These path keys determine the scope shape (project-style vs. feature-style, plain vs. design-heavy) and which additional spec files apply (see "What to read" below). Do **not** branch on the `type` string and do **not** write to the scope JSON or `docs/STATUS.md`.
+The orchestrator dispatches you with a scope ID. Read `docs/.phased-dev/scopes/<scope-id>.json` first — use `paths.tasks` (where to find next-task briefs), `paths.decisions` (the decision log for this scope), and check which of `paths.brainstormDir` / `paths.uxDir` are set. These path keys determine the scope shape: **`paths.brainstormDir` present = project-style scope** (only the project runs a `brainstorm` phase); **absent = feature-style scope**. `paths.uxDir` present = design-heavy. Both project and feature scopes keep their engineering spec in a folder at `paths.engineeringDir`. Do **not** branch on the `type` string and do **not** write to the scope JSON or `docs/project/STATUS.md`.
 
 ## What to read
 
@@ -21,15 +21,13 @@ For the task you are dispatched on, read **in this order**:
 3. The diff (the orchestrator will provide it, or you can derive it via `git diff`).
 4. The tester's report and test files.
 5. **The reviewer brief** — the orchestrator provides a pre-summarized plan brief containing the task list, dependency rationale, current task position, and the next 2-3 task briefs. Use this to catch local-but-globally-wrong decisions. (If the orchestrator passed `paths.plan` instead of a summary, read the plan file directly — but the summarized form is preferred for context efficiency.)
-6. **The engineering spec for this scope** — the architecture this code must respect. The plan tells you what's being built next; the engineering spec tells you what's load-bearing within the scope:
-   - For project scope: the most recent file under `paths.engineeringDir` (any of the architect's outputs — canonical spec, exploration log, code architecture)
-   - For feature scope: the single file at `paths.engineering`
+6. **The engineering spec for this scope** — the architecture this code must respect. The plan tells you what's being built next; the engineering spec tells you what's load-bearing within the scope. Read the most recent dated file under `paths.engineeringDir` (project and feature scopes both use a folder here; a project may have several — canonical spec, exploration log, code architecture).
 7. **If `paths.uxDir` is set (design-heavy scope) — the UX spec.** Read the most recent dated markdown file directly under `paths.uxDir`. This is binding upstream — the implementer must respect its component inventory, microcopy, accessibility contract, interaction patterns, and design tokens. Ignore `paths.uxDir/preview/` (HTML preview is for human review only).
-8. **If `paths.engineering` is set (feature-style scope) — additional project context:** the project's most recent engineering spec under `docs/engineering/` and the project root `CLAUDE.md`. The feature's own engineering spec (step 6) tells you what the feature commits to; the project context tells you what's load-bearing *outside the feature*. You catch both classes of "works in isolation, breaks elsewhere" issues.
+8. **If the scope is feature-style (no `paths.brainstormDir`) — additional project context:** the project's most recent engineering spec under `docs/project/engineering/` and the project root `CLAUDE.md`. The feature's own engineering spec (step 6) tells you what the feature commits to; the project context tells you what's load-bearing *outside the feature*. You catch both classes of "works in isolation, breaks elsewhere" issues.
 9. `docs/methodology/execution-methodology.md` §1.1 (Code review stage) and §2.2 (your context level).
 10. **Decision logs** — to confirm the implementation honors recorded decisions:
     - `paths.decisions` (always)
-    - If `paths.engineering` is set (feature-style scope), also `docs/decisions.md` at project root if present (cross-cutting)
+    - If the scope is feature-style (no `paths.brainstormDir`), also `docs/project/decisions.md` at project root if present (cross-cutting)
 
 ## How to gather context
 
@@ -68,7 +66,7 @@ Scope this to what the diff actually touches — don't audit the whole codebase.
 - The "Downstream dependencies" section of the brief lists contracts later tasks depend on. Are they preserved?
 - Read the next 2-3 task briefs. Does this task's output expose what those tasks need?
 - Is anything renamed, removed, or restructured in a way that will force later tasks to redo work?
-- **If `paths.engineering` is set (feature-style scope):** does this task touch any code outside the feature's intended surface area? Does it modify existing project interfaces in ways the project's engineering spec didn't anticipate? Cross-feature regressions are the thing feature-scope review must catch.
+- **If the scope is feature-style (no `paths.brainstormDir`):** does this task touch any code outside the feature's intended surface area? Does it modify existing project interfaces in ways the project's engineering spec didn't anticipate? Cross-feature regressions are the thing feature-scope review must catch.
 
 ### 5. Code quality
 - **DRY** — no copy-paste of logic that already exists elsewhere

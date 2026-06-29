@@ -37,7 +37,7 @@ You are dispatching the agent that owns the **active scope's current phase**. Th
 
 3. **Launch the agent.** Use the Agent tool to launch the subagent named in the pipeline entry. Pass it:
    - The active scope ID
-   - An instruction: "Read `docs/.phased-dev/scopes/<id>.json` for your output paths (`paths` field). Produce your output files there. Do NOT modify the scope JSON or `docs/STATUS.md` — the orchestrator handles state."
+   - An instruction: "Read `docs/.phased-dev/scopes/<id>.json` for your output paths (`paths` field). Produce your output files there. Do NOT modify the scope JSON or `docs/project/STATUS.md` — the orchestrator handles state."
    - Any user-supplied context (`$ARGUMENTS`)
 
 4. **When the agent returns:**
@@ -47,7 +47,7 @@ You are dispatching the agent that owns the **active scope's current phase**. Th
    - **If it reported completion:**
      1. Verify the pipeline entry's `outputCheck` now matches the filesystem (single glob or array — when an array, every glob must match at least one file). If not, the agent thought it was done but produced nothing (or only part of it — e.g., the plan file without any brief) — report this to the user and leave `phaseStatus` as `in_progress`.
      2. Set `phaseStatus` to `complete_awaiting_approval` in the active scope file.
-     3. Regenerate the status mirror. For project scope, update `docs/STATUS.md`. For feature scope, update `docs/features/<name>/STATUS.md`.
+     3. Regenerate the status mirror. For project scope, update `docs/project/STATUS.md`. For feature scope, update `docs/feature/<name>/STATUS.md`.
      4. Tell the user what was produced (paths from `paths` field) and remind them to run `/phased-dev:advance-phase` after review.
 
 ## Notes

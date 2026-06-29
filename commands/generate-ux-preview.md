@@ -24,7 +24,7 @@ Dispatch the `ux-preview` agent with:
 - The active scope ID
 - An instruction to read `docs/.phased-dev/scopes/<id>.json` for `paths.uxDir` and `type`
 - An instruction to read the most recent markdown spec under `paths.uxDir`
-- An instruction to generate the HTML preview under `paths.uxDir>preview/`
+- An instruction to generate the HTML preview under `<paths.uxDir>preview/`
 
 ## After dispatch
 

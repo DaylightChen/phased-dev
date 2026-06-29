@@ -41,7 +41,7 @@ This is a **gated** transition. Phases do not advance silently. The user must ex
 
    Write the scope file back.
 
-7. **Update status mirror** (project: `docs/STATUS.md`, feature: `docs/features/<name>/STATUS.md`):
+7. **Update status mirror** (project: `docs/project/STATUS.md`, feature: `docs/feature/<name>/STATUS.md`):
    - Current Phase, Last Completed, What's Next.
    - **If the new phase is `implement`:** initialize the Task Progress table. Read `paths.plan` from the scope JSON to get the full task list, then populate the table with all tasks as "pending":
      ```
