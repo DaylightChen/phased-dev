@@ -22,20 +22,22 @@ Both pipelines open with a `research` phase (prior art, feasibility, how the fea
 
 2. **Confirm the project is initialized.** `docs/.phased-dev/state.json` and `docs/.phased-dev/scopes/project.json` must exist. If not, tell the user to run `/phased-dev:init-project` first (or, if applying feature mode to an unrelated project, scaffold those files manually).
 
-3. **Confirm the project has an engineering spec** — at least one file under `docs/engineering/`. If missing, warn the user: the feature-architect can still proceed but will have to infer architecture from code, which is lower quality.
+3. **Confirm the project has an engineering spec** — at least one file under `docs/project/engineering/`. If missing, warn the user: the feature-architect can still proceed but will have to infer architecture from code, which is lower quality.
 
-4. **Check for existing feature scope.** If `docs/.phased-dev/scopes/feature/<feature-name>.json` or `docs/features/<feature-name>/` already exists, ask the user: (a) revising the existing design, (b) starting over (delete first, then re-run), or (c) wrong name. Do not silently overwrite.
+4. **Check for existing feature scope.** If `docs/.phased-dev/scopes/feature/<feature-name>.json` or `docs/feature/<feature-name>/` already exists, ask the user: (a) revising the existing design, (b) starting over (delete first, then re-run), or (c) wrong name. Do not silently overwrite.
 
 5. **Ask which pipeline to use.** Present `standard` vs `design-heavy` (use the AskUserQuestion tool if available, otherwise ask plainly). If the user replies "skip" or just confirms the default, use `standard`. Recommend `standard` unless the feature is clearly UX-led.
 
 ## Scaffold
 
 1. **Create directories:**
-   - `docs/features/<feature-name>/`
-   - `docs/features/<feature-name>/research/` (the `research` phase runs first in both pipelines)
-   - `docs/features/<feature-name>/tasks/` (empty for now)
+   - `docs/feature/<feature-name>/`
+   - `docs/feature/<feature-name>/research/` (the `research` phase runs first in both pipelines)
+   - `docs/feature/<feature-name>/engineering/` (the feature-architect writes the engineering spec here)
+   - `docs/feature/<feature-name>/plan/` (the planner writes implementation-plan.md here)
+   - `docs/feature/<feature-name>/tasks/` (empty for now)
    - `docs/.phased-dev/scopes/feature/` (if not present)
-   - **If pipeline = `design-heavy`, also create:** `docs/features/<feature-name>/ux/`
+   - **If pipeline = `design-heavy`, also create:** `docs/feature/<feature-name>/ux/`
 
 2. **Create the feature scope config.** Pick the template based on pipeline:
 
@@ -47,9 +49,9 @@ Both pipelines open with a `research` phase (prior art, feasibility, how the fea
    Substitute `{{FEATURE_NAME}}` with the parsed name. The scope ID is `feature/<feature-name>` in both cases; the pipeline difference is recorded in the JSON's `type` field (`feature` vs `feature-design-heavy`).
 
 3. **Copy feature directory templates:**
-   - `${CLAUDE_PLUGIN_ROOT}/templates/feature-engineering-template.md` → `docs/features/<feature-name>/engineering.md` (skeleton; the feature-architect rewrites or trims it)
-   - `${CLAUDE_PLUGIN_ROOT}/templates/decisions.md` → `docs/features/<feature-name>/decisions.md` (feature-scoped decision log)
-   - `${CLAUDE_PLUGIN_ROOT}/templates/feature-status.md` → `docs/features/<feature-name>/STATUS.md`. Substitute both placeholders:
+   - `${CLAUDE_PLUGIN_ROOT}/templates/feature-engineering-template.md` → `docs/feature/<feature-name>/engineering/engineering.md` (skeleton inside the engineering folder; the feature-architect rewrites it or replaces it with a dated spec)
+   - `${CLAUDE_PLUGIN_ROOT}/templates/decisions.md` → `docs/feature/<feature-name>/decisions.md` (feature-scoped decision log)
+   - `${CLAUDE_PLUGIN_ROOT}/templates/feature-status.md` → `docs/feature/<feature-name>/STATUS.md`. Substitute both placeholders:
      - `{{FEATURE_NAME}}` → the parsed feature name
      - `{{INITIAL_PHASE}}` → the first phase of the chosen pipeline (`research` for both `standard` and `design-heavy`). Do not hardcode — read it from the scope JSON's `pipeline[0].phase` you just wrote. STATUS.md must agree with the scope JSON's `currentPhase`.
 
@@ -66,7 +68,7 @@ Pass the agent:
 - The active scope ID: `feature/<feature-name>`
 - An instruction to read `docs/.phased-dev/scopes/feature/<feature-name>.json` for its output paths and to confirm `currentPhase` matches its role
 - The user's one-line description ($ARGUMENTS)
-- An instruction to read the project's `CLAUDE.md`, the latest engineering spec under `docs/engineering/`, the project-level `docs/decisions.md` (if present, for cross-cutting constraints), and to Glob/Grep for code the feature is likely to touch — research is grounded in the existing system
+- An instruction to read the project's `CLAUDE.md`, the latest engineering spec under `docs/project/engineering/`, the project-level `docs/project/decisions.md` (if present, for cross-cutting constraints), and to Glob/Grep for code the feature is likely to touch — research is grounded in the existing system
 - An instruction to ask 2-4 sharpening questions if the brief is too vague to research, before sweeping
 
 Set `phaseStatus` to `in_progress` in the scope file before dispatching. After the agent returns done, set it to `complete_awaiting_approval` (the orchestrator owns scope-state writes — agents do not).

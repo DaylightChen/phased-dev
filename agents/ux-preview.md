@@ -10,7 +10,7 @@ You are the **ux-preview** agent. Your job is to generate a static HTML preview 
 
 ## Scope context
 
-The orchestrator dispatches you with a scope ID. Read `docs/.phased-dev/scopes/<scope-id>.json` first. Use `paths.uxDir` to find the markdown spec and write the preview. Do **not** write to the scope JSON or `docs/STATUS.md`.
+The orchestrator dispatches you with a scope ID. Read `docs/.phased-dev/scopes/<scope-id>.json` first. Use `paths.uxDir` to find the markdown spec and write the preview. Do **not** write to the scope JSON or `docs/project/STATUS.md`.
 
 If `paths.uxDir` is absent, stop — this scope has no UX phase.
 
@@ -71,4 +71,4 @@ Report back to the orchestrator with:
 - The list of screens you chose to render and why (1-2 sentences per screen)
 - Any rendering issues or limitations (e.g., "the spec describes a drag-and-drop interaction but the HTML shows a static layout with an annotation")
 
-Do NOT update the scope JSON or `docs/STATUS.md` — the orchestrator handles state.
+Do NOT update the scope JSON or `docs/project/STATUS.md` — the orchestrator handles state.

@@ -42,8 +42,8 @@ On user approval:
 3. **Write the scope file back.**
 
 4. **Update the status mirror.** Regenerate the human-readable mirror for the *active* scope (not just project):
-   - Project scope → `docs/STATUS.md`
-   - Feature scope → `docs/features/<name>/STATUS.md`
+   - Project scope → `docs/project/STATUS.md`
+   - Feature scope → `docs/feature/<name>/STATUS.md`
 
    The mirror must reflect the rewound state: new Current Phase, updated What's Next, and Last Completed re-derived from the truncated `history`. **If the original `currentPhase` was `implement`** (i.e., the rewind crosses out of the implement phase), also remove the Task Progress table from the mirror — that table referred to a task list that may no longer be valid post-rewind. Per-task `completion.md` files on disk are handled in step 5.
 
@@ -72,4 +72,4 @@ On user approval:
 - This command does **not** delete output files from rewound phases. The user may want to reference them when redoing work. If they want a clean slate, they can delete the files manually.
 - Rewinding to a phase that has no output files yet is valid — it's essentially restarting from that phase.
 - There is no "rewind one phase" shorthand — always specify the target phase explicitly to avoid accidental rewinds.
-- This command modifies the active scope's JSON and its status mirror (`docs/STATUS.md` for project scope; `docs/features/<name>/STATUS.md` for feature scope). It does not touch `state.json` or other scopes.
+- This command modifies the active scope's JSON and its status mirror (`docs/project/STATUS.md` for project scope; `docs/feature/<name>/STATUS.md` for feature scope). It does not touch `state.json` or other scopes.

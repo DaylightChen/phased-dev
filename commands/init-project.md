@@ -11,7 +11,7 @@ You are scaffolding the phased-dev structure into the current working directory.
 
 1. **Parse arguments.** If `$ARGUMENTS` is non-empty, treat the first token as the project name and the rest (joined) as the one-line description. If empty or partial, ask the user for what's missing.
 
-2. **Check for existing scaffolding.** If any of `CLAUDE.md`, `docs/STATUS.md`, `docs/.phased-dev/state.json`, or `docs/methodology/planning-methodology.md` already exist, **stop and ask the user** before overwriting. Do not silently overwrite.
+2. **Check for existing scaffolding.** If any of `CLAUDE.md`, `docs/project/STATUS.md`, `docs/.phased-dev/state.json`, or `docs/methodology/planning-methodology.md` already exist, **stop and ask the user** before overwriting. Do not silently overwrite.
 
 3. **Ask which pipeline to use.** Present the choice to the user and wait for their answer (use the AskUserQuestion tool if available, otherwise ask plainly):
 
@@ -26,14 +26,14 @@ You are scaffolding the phased-dev structure into the current working directory.
    - `docs/`
    - `docs/.phased-dev/`
    - `docs/.phased-dev/scopes/`
-   - `docs/research/`
-   - `docs/brainstorm/`
-   - `docs/engineering/`
-   - `docs/plan/`
+   - `docs/project/research/`
+   - `docs/project/brainstorm/`
+   - `docs/project/engineering/`
+   - `docs/project/plan/`
    - `docs/methodology/`
    - `docs/templates/`
-   - `docs/tasks/`
-   - **If pipeline = `design-heavy`, also create:** `docs/ux/`
+   - `docs/project/tasks/`
+   - **If pipeline = `design-heavy`, also create:** `docs/project/ux/`
 
 5. **Copy templates from the plugin.** The plugin's templates live at `${CLAUDE_PLUGIN_ROOT}/templates/`. Substitute `{{PROJECT_NAME}}` and `{{ONE_LINE_DESCRIPTION}}` in `CLAUDE.md` only.
 
@@ -42,11 +42,11 @@ You are scaffolding the phased-dev structure into the current working directory.
    | Source | Destination |
    |--------|-------------|
    | `${CLAUDE_PLUGIN_ROOT}/templates/CLAUDE.md` | `./CLAUDE.md` (substitute placeholders) |
-   | `${CLAUDE_PLUGIN_ROOT}/templates/STATUS.md` | `./docs/STATUS.md` |
+   | `${CLAUDE_PLUGIN_ROOT}/templates/STATUS.md` | `./docs/project/STATUS.md` |
    | `${CLAUDE_PLUGIN_ROOT}/templates/state.json` | `./docs/.phased-dev/state.json` |
    | `${CLAUDE_PLUGIN_ROOT}/templates/scope-model.md` | `./docs/.phased-dev/scope-model.md` |
-   | `${CLAUDE_PLUGIN_ROOT}/templates/decisions.md` | `./docs/decisions.md` |
-   | `${CLAUDE_PLUGIN_ROOT}/templates/known-issues.md` | `./docs/known-issues.md` |
+   | `${CLAUDE_PLUGIN_ROOT}/templates/decisions.md` | `./docs/project/decisions.md` |
+   | `${CLAUDE_PLUGIN_ROOT}/templates/known-issues.md` | `./docs/project/known-issues.md` |
    | `${CLAUDE_PLUGIN_ROOT}/templates/planning-methodology.md` | `./docs/methodology/planning-methodology.md` |
    | `${CLAUDE_PLUGIN_ROOT}/templates/execution-methodology.md` | `./docs/methodology/execution-methodology.md` |
    | `${CLAUDE_PLUGIN_ROOT}/templates/log-template.md` | `./docs/templates/log-template.md` |
@@ -74,6 +74,6 @@ You are scaffolding the phased-dev structure into the current working directory.
 ## Notes
 
 - Do not create `.gitignore`, `package.json`, or any code files. This command only scaffolds the *methodology* docs and scope state. The first task in the `implement` phase will scaffold the actual project.
-- The `docs/.phased-dev/` directory is the machine-readable source of truth for phase/scope state. `docs/STATUS.md` is the human-readable mirror — agents that need state should read the JSON, not the markdown.
+- The `docs/.phased-dev/` directory is the machine-readable source of truth for phase/scope state. `docs/project/STATUS.md` is the human-readable mirror — agents that need state should read the JSON, not the markdown.
 - If the current directory is not a git repo, mention this in the final report — the user may want to `git init` before proceeding.
 - **Switching pipelines later:** there is no migration command. To switch from `standard` to `design-heavy` (or vice-versa) before any phase work has started, the user can delete `docs/.phased-dev/scopes/project.json` and re-run this command. Switching after brainstorm has been written requires manual scope-JSON editing — flag this if the user asks.

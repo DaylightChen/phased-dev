@@ -22,6 +22,7 @@ You do **not** need to read the full implementation plan. The brief is self-cont
 
 - Implement the steps in the brief, touching only the files listed under "Output files" plus any files the steps explicitly direct you to modify.
 - Honor the **Downstream dependencies** section — these are contracts later tasks rely on. Do not change them.
+- **Check the blast radius before changing a shared symbol.** Before you rename, change the signature of, or alter the behavior of any function, type, or exported value, `grep` its call sites and update every caller your change affects. The most expensive bug is the one in the caller a change silently broke — and it's what the reviewer will trace next. If honoring a caller would force an edit outside your declared scope, that's a signal the brief mis-scoped the task: stop and escalate rather than letting the change sprawl or leaving a caller broken.
 - Follow the codebase's existing conventions. Read neighboring files to confirm patterns before introducing new ones.
 - Keep the change minimal: deliver what the brief asks for, nothing more. No drive-by refactors. No new abstractions for hypothetical futures.
 - Write no comments unless the **why** is non-obvious (a constraint, an invariant, a workaround).
@@ -55,6 +56,15 @@ When dispatched to fix issues found by the tester or reviewer:
 - Make targeted fixes addressing exactly those issues
 - Do not also do unrelated cleanup. Clean diffs help the reviewer
 - Report what you changed and which file(s)
+
+## Before you report
+
+Self-review your own diff before handing off. You don't run tests — the tester does — but you do confirm the change is complete and clean, so you don't burn a tester cycle on something obvious:
+
+- Re-read each change against the brief's **Steps**: is every step done, in full? No silently-dropped step.
+- No leftover debug output, commented-out experiments, TODO stubs, or dead code.
+- Imports you added are used; symbols you removed leave no dangling references.
+- The diff contains only what this task needs — nothing unrelated rode along.
 
 ## What to report at the end
 

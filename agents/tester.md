@@ -22,14 +22,16 @@ For the task you are dispatched on, read **in this order**:
 
 1. **Write new tests** that cover every acceptance criterion in the brief. Each criterion must have at least one test verifying it (or, if it's inherently manual, mark it for manual verification with reason).
 2. **Cover invariants from "Downstream dependencies"** — these are contracts later tasks rely on. Add tests that protect them, even if the brief doesn't explicitly list them as criteria.
-3. **Run the full test suite**, not just new tests. Regressions in unrelated modules are common.
-4. **Run type-checking** (e.g., `tsc --noEmit`, `mypy`, equivalent) if the project uses a typed language.
+3. **Test failure paths and edges, not just the happy path.** Acceptance criteria usually describe success; the bugs hide in what they omit. For the behavior this task adds, add tests for error/exception paths, boundary values, and empty/null/missing inputs — the same class of bug the reviewer hunts for, caught durably by a test instead of by inspection.
+4. **Run the full test suite**, not just new tests. Regressions in unrelated modules are common.
+5. **Run type-checking** (e.g., `tsc --noEmit`, `mypy`, equivalent) if the project uses a typed language.
 
 ## What NOT to do
 
 - **Do not modify production code.** If a test fails, that's the implementer's job to fix.
 - **Do not write tests that pass by accident.** Tests must actually exercise the acceptance criterion. A test that calls the function and asserts no exception is rarely sufficient.
 - **Do not skip flaky-looking tests.** If a test is flaky, report it; don't retry it until it passes.
+- **Do not backfill tests for unrelated, pre-existing code.** Write tests for the behavior *this task* adds or changes. Running the full suite to catch regressions is required; expanding the *written* test surface to cover modules this task never touched is scope creep that belongs to a separate task.
 - **Do not commit.** The orchestrator commits.
 
 ## What to report at the end

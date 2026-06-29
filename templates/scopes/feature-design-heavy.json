@@ -7,44 +7,44 @@
     {
       "phase": "research",
       "agent": "researcher",
-      "outputCheck": "docs/features/{{FEATURE_NAME}}/research/*.md"
+      "outputCheck": "docs/feature/{{FEATURE_NAME}}/research/*.md"
     },
     {
       "phase": "ux",
       "agent": "ux-designer",
-      "outputCheck": "docs/features/{{FEATURE_NAME}}/ux/*.md"
+      "outputCheck": "docs/feature/{{FEATURE_NAME}}/ux/*.md"
     },
     {
       "phase": "engineering",
       "agent": "feature-architect",
-      "outputCheck": "docs/features/{{FEATURE_NAME}}/engineering.md"
+      "outputCheck": "docs/feature/{{FEATURE_NAME}}/engineering/*.md"
     },
     {
       "phase": "plan",
       "agent": "planner",
       "outputCheck": [
-        "docs/features/{{FEATURE_NAME}}/plan.md",
-        "docs/features/{{FEATURE_NAME}}/tasks/task-*/brief.md"
+        "docs/feature/{{FEATURE_NAME}}/plan/implementation-plan.md",
+        "docs/feature/{{FEATURE_NAME}}/tasks/task-*/brief.md"
       ]
     },
     {
       "phase": "implement",
       "agent": null,
       "outputCheck": [
-        "docs/features/{{FEATURE_NAME}}/tasks/task-*/brief.md",
-        "docs/features/{{FEATURE_NAME}}/tasks/task-*/completion.md"
+        "docs/feature/{{FEATURE_NAME}}/tasks/task-*/brief.md",
+        "docs/feature/{{FEATURE_NAME}}/tasks/task-*/completion.md"
       ]
     }
   ],
   "currentPhase": "research",
   "phaseStatus": "not_started",
   "paths": {
-    "researchDir": "docs/features/{{FEATURE_NAME}}/research/",
-    "uxDir": "docs/features/{{FEATURE_NAME}}/ux/",
-    "engineering": "docs/features/{{FEATURE_NAME}}/engineering.md",
-    "plan": "docs/features/{{FEATURE_NAME}}/plan.md",
-    "tasks": "docs/features/{{FEATURE_NAME}}/tasks/",
-    "decisions": "docs/features/{{FEATURE_NAME}}/decisions.md"
+    "researchDir": "docs/feature/{{FEATURE_NAME}}/research/",
+    "uxDir": "docs/feature/{{FEATURE_NAME}}/ux/",
+    "engineeringDir": "docs/feature/{{FEATURE_NAME}}/engineering/",
+    "plan": "docs/feature/{{FEATURE_NAME}}/plan/implementation-plan.md",
+    "tasks": "docs/feature/{{FEATURE_NAME}}/tasks/",
+    "decisions": "docs/feature/{{FEATURE_NAME}}/decisions.md"
   },
   "history": []
 }

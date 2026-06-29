@@ -1,6 +1,6 @@
 # Feature Engineering Spec — [Feature Name]
 
-> Engineering spec for a feature within an existing project. In standard feature pipeline it also covers user-visible behavior (combined product + engineering). In design-heavy feature pipeline the UX is upstream and this doc focuses on engineering. Drafted by the `feature-architect` agent. Lives at `docs/features/<feature-name>/engineering.md`.
+> Engineering spec for a feature within an existing project. In standard feature pipeline it also covers user-visible behavior (combined product + engineering). In design-heavy feature pipeline the UX is upstream and this doc focuses on engineering. Drafted by the `feature-architect` agent. Lives under `docs/feature/<feature-name>/engineering/`.
 
 ## Goal
 
